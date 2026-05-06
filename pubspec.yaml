@@ -1,7 +1,9 @@
 name: simple_floating_panel
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/SimonWang9610/simple_floating_panel.git
+repository: https://github.com/SimonWang9610/simple_floating_panel
+issue_tracker: https://github.com/SimonWang9610/simple_floating_panel/issues
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
