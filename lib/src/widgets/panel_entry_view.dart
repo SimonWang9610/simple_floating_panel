@@ -77,9 +77,13 @@ class _PanelEntryViewState extends State<PanelEntryView> {
         MasterPanelEntry m => m.id,
         SlavePanelEntry s => s.masterId,
       },
-      child: widget.entry.builder(
-        context,
-        widget.entry.controller,
+      child: Builder(
+        builder: (inner) {
+          return widget.entry.builder(
+            inner,
+            widget.entry.controller,
+          );
+        },
       ),
     );
 

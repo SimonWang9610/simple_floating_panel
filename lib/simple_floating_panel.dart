@@ -1,6 +1,7 @@
 library;
 
 export 'src/scope.dart';
+
 export 'src/components/panel_positioner.dart';
 export 'src/components/panel_sizer.dart';
 
