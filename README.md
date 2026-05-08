@@ -22,9 +22,9 @@ flutter pub get
 ## Demo
 
 <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-<img src="https://raw.githubusercontent.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif" alt="Demo" width="600"/>
+<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif?raw=true" alt="Demo" width="600"/>
 
-<img src="https://raw.githubusercontent.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-resize-move-demo.gif" alt="Demo" width="600"/>
+<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-resize-move-demo.gif?raw=true" alt="Demo" width="600"/>
 </div>
 
 ## Core features
