@@ -28,6 +28,8 @@ abstract base class PanelController extends ChangeNotifier {
   /// Checks if the panel with the given id is currently visible (i.e., not minimized).
   bool isVisible(Object panelId);
 
+  PanelEntry? entryOf(Object panelId);
+
   PanelMode get mode;
   set mode(PanelMode newMode);
 
@@ -166,10 +168,8 @@ final class _PanelControllerImpl extends PanelController
   /// PanelViewDelegate methods
 
   @override
-  PanelEntry entryOf(Object panelId) {
-    final entry = _registrar.entryOf(panelId);
-    assert(entry != null, 'No panel with id "$panelId" is registered.');
-    return entry!;
+  PanelEntry? entryOf(Object panelId) {
+    return _registrar.entryOf(panelId);
   }
 
   @override
