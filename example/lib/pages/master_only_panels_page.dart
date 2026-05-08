@@ -15,7 +15,13 @@ class _MasterOnlyPanelsPageState extends State<MasterOnlyPanelsPage> {
   @override
   void initState() {
     super.initState();
-    _controller = PanelController();
+    _controller = PanelController(
+      positioner: PanelPositioner.follow(
+        screenAlignment: Alignment.center,
+        panelAlignment: Alignment.center,
+        offset: const Offset(-20, 20),
+      ),
+    );
   }
 
   @override

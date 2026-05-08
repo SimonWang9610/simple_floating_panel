@@ -1,44 +1,17 @@
 # simple_floating_panel
 
-A lightweight, desktop-style floating window system for Flutter.
+A lightweight desktop-style floating panel system for Flutter.
 
-Create draggable, resizable, minimizable, maximizable panels with built-in z-order management, preview mode, and dock support.
-
----
-
-## Demo
-
-### Multi-panel workflow
-<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif?raw=true" width="320">
-
-### Minimize / restore with dock
-<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-minimize-restore-demo.gif?raw=true" width="320">
-
----
-
-## Why this package
-
-- **Desktop-like UX in Flutter**: movable and resizable windows inside your app.
-- **Multi-panel orchestration**: open, close, focus, and reorder multiple panels.
-- **Two display modes**:
-	- `PanelMode.window`: freeform floating windows.
-	- `PanelMode.preview`: grid-style overview for quick switching.
-- **Minimize + dock pattern**: use `FloatingPanelDock` out of the box.
-- **Flexible setup**: route-based or overlay-based mounting.
-- **Customizable behavior**: pluggable sizing (`PanelSizer`), positioning (`PanelPositioner`), constraints, and decorations (`PanelConfig`).
+Supports multi-panel orchestration with drag/resize, z-order, preview mode, minimize/restore, and master-slave panel relations.
 
 ---
 
 ## Installation
 
-Add to `pubspec.yaml`:
-
 ```yaml
 dependencies:
-	simple_floating_panel: ^1.0.0
+  simple_floating_panel: ^1.0.0
 ```
-
-Then run:
 
 ```bash
 flutter pub get
@@ -46,98 +19,156 @@ flutter pub get
 
 ---
 
-## Quick start
+## Core features
+
+- Multi-panel orchestration with z-order management
+- Built-in drag and resize panel interactions
+- Window and preview modes (`PanelMode.window`, `PanelMode.preview`)
+- Minimize/restore workflow and optional dock integration
+- Master-slave relations with cascade close behavior
+- Flexible initialization via `PanelConstraints`, `PanelSizer`, `PanelPositioner`
+- Visual customization via `PanelConfig` and `PanelPreviewStyle`
+- Optional overlay-based mounting (`useOverlay: true`)
+
+### Customization highlights
+
+You can independently customize panel placement strategy, initial sizing strategy, and visual style:
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:simple_floating_panel/simple_floating_panel.dart';
+final controller = PanelController(
+  initialConstraints: PanelConstraints.scale(MediaQuery.sizeOf(context), maxSizeRatio: 0.9),
+  positioner: const PanelPositioner.cascade(offset: Offset(24, 24)),
+  sizer: const PanelSizer.aspectRatio(aspectRatio: 16 / 10, scale: 0.35),
+  initialConfig: const PanelConfig(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
+    focusedDecoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.fromBorderSide(BorderSide(color: Colors.blue, width: 2)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    ),
+  ),
+);
+```
 
-class FloatingPanelDemo extends StatefulWidget {
-	const FloatingPanelDemo({super.key});
+This lets you tune behavior and style without changing panel business logic.
 
-	@override
-	State<FloatingPanelDemo> createState() => _FloatingPanelDemoState();
+## Provider-style code snippets
+
+### 1) Provide a shared `PanelController`
+
+```dart
+class AppShell extends StatefulWidget {
+  const AppShell({super.key});
+
+  @override
+  State<AppShell> createState() => _AppShellState();
 }
 
-class _FloatingPanelDemoState extends State<FloatingPanelDemo> {
-	PanelController? _panelController;
+class _AppShellState extends State<AppShell> {
+  final controller = PanelController();
 
-	@override
-	void dispose() {
-		_panelController?.dispose();
-		super.dispose();
-	}
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
-	void _openMainPanel() {
-		final screenSize = MediaQuery.sizeOf(context);
+  @override
+  Widget build(BuildContext context) {
+    return PanelScope(
+      controller: controller,
+      child: const MyPage(),
+    );
+  }
+}
+```
 
-		_panelController ??= PanelController(
-			initialConstraints: PanelConstraints.scale(screenSize, maxSizeRatio: 0.8),
-		);
+### 2) Consume the provided controller
 
-		_panelController!.open(
-			context,
-			Panel(
-				id: 'main',
-				title: 'Main Panel',
-				initialSize: const Size(420, 320),
-				builder: (_, panelViewController) {
-					return Material(
-						child: Column(
-							children: [
-								Row(
-									children: [
-										IconButton(
-											onPressed: () {
-												final mode = panelViewController.value.mode;
-												if (mode == PanelViewMode.maximized) {
-													panelViewController.restore();
-												} else {
-													panelViewController.maximize();
-												}
-											},
-											icon: const Icon(Icons.fullscreen),
-										),
-										const Spacer(),
-										IconButton(
-											onPressed: panelViewController.close,
-											icon: const Icon(Icons.close),
-										),
-									],
-								),
-								const Expanded(
-									child: Center(child: Text('Hello from simple_floating_panel 👋')),
-								),
-							],
-						),
-					);
-				},
-			),
-		);
+```dart
+final controller = PanelScope.of(context);
+controller.open(
+  context,
+  Panel(id: 'panel-1', builder: (_, c) => MyPanelView(controller: c)),
+);
+```
 
-		setState(() {});
-	}
+### 3) Open a slave panel from current panel context
+> `context` must be inside a panel view built by the `builder` of a master/salve panel.
 
-	@override
-	Widget build(BuildContext context) {
-		return Scaffold(
-			appBar: AppBar(title: const Text('Floating Panel Demo')),
-			body: Center(
-				child: ElevatedButton(
-					onPressed: _openMainPanel,
-					child: const Text('Open panel'),
-				),
-			),
-			bottomNavigationBar: _panelController == null
-					? null
-					: SafeArea(
-							child: Align(
-								alignment: Alignment.centerLeft,
-								child: FloatingPanelDock(controller: _panelController!),
-							),
-						),
-		);
-	}
+```dart
+PanelMasterScope.open(context, (masterId) {
+  return Panel(
+    id: 'slave-1',
+    masterId: masterId,
+    builder: (_, c) => MyPanelView(controller: c),
+  );
+});
+```
+
+---
+
+## Code usage
+
+### Quick start
+
+```dart
+final controller = PanelController(
+  initialConstraints: PanelConstraints.scale(MediaQuery.sizeOf(context), maxSizeRatio: 0.8),
+);
+
+controller.open(
+  context,
+  Panel(
+    id: 'main',
+    title: 'Main Panel',
+    initialSize: const Size(420, 320),
+    builder: (_, c) => MyPanelView(controller: c),
+  ),
+);
+```
+
+### Master-only usage
+
+```dart
+controller.open(
+  context,
+  Panel(id: 'master-1', title: 'Master 1', builder: (_, c) => MyPanelView(controller: c)),
+);
+```
+
+### Master + slave usage
+
+```dart
+controller.open(context, Panel(id: 'master-1', builder: (_, c) => MyPanelView(controller: c)));
+
+controller.open(
+  context,
+  Panel(id: 'slave-1', masterId: 'master-1', builder: (_, c) => MyPanelView(controller: c)),
+);
+```
+
+### Use inside panel view
+
+```dart
+class MyPanelView extends StatelessWidget {
+  final PanelViewController controller;
+  const MyPanelView({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(onPressed: controller.minimize, icon: const Icon(Icons.minimize)),
+        IconButton(onPressed: controller.maximize, icon: const Icon(Icons.fullscreen)),
+        IconButton(onPressed: controller.restore, icon: const Icon(Icons.filter_none)),
+        IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+      ],
+    );
+  }
 }
 ```
 
@@ -147,129 +178,81 @@ class _FloatingPanelDemoState extends State<FloatingPanelDemo> {
 
 ### `PanelController`
 
-Global manager for all panels:
+Global panel manager.
 
-- Open/close/focus panels: `open`, `close`, `closeAll`, `bringToFront`
-- Query state: `panels`, `orderedPanels`, `focusedPanel`, `hasPanels`
-- Runtime settings: `mode`, `constraints`, `config`
-
-Use `useOverlay: true` to mount panels in an overlay above route transitions.
+| Parameter / API | Kind | Description |
+|---|---|---|
+| `open(context, panel)` | Method | Opens a panel and registers it into controller state. |
+| `close(panelId)` | Method | Closes one panel by id. |
+| `closeAll()` | Method | Closes all panels managed by this controller. |
+| `bringToFront(panelId)` | Method | Brings a panel to top z-order and focuses it. |
+| `isVisible(panelId)` | Method | Returns whether the panel is currently visible (not minimized). |
+| `focusedPanel` | Getter | Id of the currently focused panel. |
+| `orderedPanels` | Getter | Panels in z-order (back to front). |
+| `panels` | Getter | Panels in registration order. |
+| `mode` | Property | Display mode: `PanelMode.window` or `PanelMode.preview`. |
+| `constraints` | Property | Runtime bounds and size constraints for panels. |
+| `config` | Property | Runtime visual config (`PanelConfig`, preview style, decorations). |
 
 ### `Panel`
 
-Describes one window:
+Panel descriptor used when opening a panel.
 
-- Required: `id`, `builder`
-- Optional: `title`, `initialPosition`, `initialSize`
-- Behavior flags: `maintainState`, `useBuiltInView`, `addRepaintBoundary`
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `id` | `Object` | Yes | Unique identifier of the panel. |
+| `builder` | `PanelWidgetBuilder` | Yes | Builds panel content with a `PanelViewController`. |
+| `title` | `String?` | No | Optional title used by panel UI/dock representation. |
+| `initialSize` | `Size?` | No | Initial panel size before constraints are applied. |
+| `initialPosition` | `Offset?` | No | Initial origin before constraints are applied. |
+| `maintainState` | `bool` | No | Keeps panel widget state when hidden/mode-switched. |
+| `useBuiltInView` | `bool` | No | Enables built-in drag/resize view behavior. |
+| `addRepaintBoundary` | `bool` | No | Wraps panel with `RepaintBoundary` for paint optimization. |
+| `masterId` | `Object?` | No | When set, creates a slave panel attached to the master panel id. |
 
 ### `PanelViewController`
 
-Controls a single panel instance from inside its view:
+Controller for a single rendered panel.
 
-- `minimize()`, `maximize()`, `restore()`
-- `move(dx, dy)` and `resize(delta, direction)`
-- `bringToFront()`, `close()`, `title = ...`
+| Parameter / API | Kind | Description |
+|---|---|---|
+| `value` | Getter | Current `PanelViewState` (title, mode, geometry). |
+| `minimize()` | Method | Switches panel to minimized mode. |
+| `maximize()` | Method | Switches panel to maximized mode. |
+| `restore()` | Method | Restores panel from minimized/maximized mode. |
+| `move(dx, dy)` | Method | Moves panel by delta offsets. |
+| `resize(delta, direction)` | Method | Resizes panel from a specific edge/corner direction. |
+| `bringToFront()` | Method | Requests focus/top z-order for the panel. |
+| `close()` | Method | Closes this panel. |
+| `title = ...` | Setter | Updates panel title at runtime. |
 
----
+### `PanelScope` and `PanelMasterScope`
 
-## Open nested/sub panels
-
-Inside any panel widget, use `PanelScope.of(context)` to access the same root controller and open additional panels:
-
-```dart
-void openSubPanel(BuildContext context) {
-	final controller = PanelScope.of(context);
-
-	controller.open(
-		context,
-		Panel(
-			id: UniqueKey(),
-			title: 'Sub Panel',
-			builder: (_, viewController) {
-				return Material(
-					child: Center(
-						child: ElevatedButton(
-							onPressed: viewController.close,
-							child: const Text('Close'),
-						),
-					),
-				);
-			},
-		),
-	);
-}
-```
+| Scope | Main API | Description |
+|---|---|---|
+| `PanelScope` | `of(context)`, `maybeOf(context)` | Reads a provided `PanelController` from widget tree. |
+| `PanelMasterScope` | `of(context)`, `maybeOf(context)`, `open(context, panelBuilder)` | Reads current master id and opens slave panels attached to that master. |
 
 ---
 
-## Layout and behavior customization
 
-### Panel bounds
 
-Use `PanelConstraints`:
 
-- `PanelConstraints.scale(screenSize, minSizeRatio, maxSizeRatio, edgeVisibleThreshold)`
-- `PanelConstraints.fromPadding(screenSize, padding: ...)`
 
-### Initial position strategy
+## Example pages
 
-Use `PanelPositioner`:
+- [example/lib/main.dart](example/lib/main.dart): example launcher.
+- [example/lib/pages/panel_scope_provided_controller_page.dart](example/lib/pages/panel_scope_provided_controller_page.dart): shared controller via `PanelScope`.
+- [example/lib/pages/master_only_panels_page.dart](example/lib/pages/master_only_panels_page.dart): master-only usage.
+- [example/lib/pages/master_slave_panels_page.dart](example/lib/pages/master_slave_panels_page.dart): master-slave usage.
 
-- `PanelPositioner.cascade()`
-- `PanelPositioner.alwaysOrigin()`
-- `PanelPositioner.follow(panelAlignment: ..., screenAlignment: ..., offset: ...)`
-
-### Initial size strategy
-
-Use `PanelSizer`:
-
-- `PanelSizer.scale(scale: ...)`
-- `PanelSizer.aspectRatio(aspectRatio: ..., scale: ...)`
-- `PanelSizer.fixed(size: ...)`
-
-### Visual style
-
-Use `PanelConfig` + `PanelPreviewStyle` to customize:
-
-- panel decoration / focused decoration
-- preview grid spacing
-- preview barrier color and dismiss behavior
-
----
-
-## Modes and dock UX
-
-- Set controller `mode`:
-	- `PanelMode.window`: normal draggable windows.
-	- `PanelMode.preview`: panel overview grid.
-- Use `FloatingPanelDock` to surface minimized panels and quick actions.
-
----
-
-## Example app
-
-A complete runnable sample is available in [example/lib/main.dart](example/lib/main.dart).
-
-Run it with:
+Run examples:
 
 ```bash
 cd example
 flutter run
 ```
 
----
-
-## Roadmap ideas
-
-- keyboard shortcuts for focus switching
-- snapping / tiling layouts
-- optional desktop title-bar presets
-
----
-
 ## Contributing
 
 Issues and PRs are welcome: https://github.com/SimonWang9610/simple_floating_panel/issues
-
-If this package helps your app, a ⭐ on the repository is appreciated.

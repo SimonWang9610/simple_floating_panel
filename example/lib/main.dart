@@ -17,7 +17,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final PanelController _providedController = PanelController();
+  final PanelController _providedController = PanelController(
+    positioner: PanelPositioner.follow(
+      screenAlignment: Alignment.topRight,
+      panelAlignment: Alignment.topRight,
+      offset: const Offset(-20, 20),
+    ),
+  );
 
   @override
   void dispose() {

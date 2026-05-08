@@ -19,7 +19,13 @@ class _MasterSlavePanelsPageState extends State<MasterSlavePanelsPage> {
   @override
   void initState() {
     super.initState();
-    _controller = PanelController();
+    _controller = PanelController(
+      positioner: PanelPositioner.follow(
+        screenAlignment: Alignment.bottomLeft,
+        panelAlignment: Alignment.bottomLeft,
+        offset: const Offset(20, -20),
+      ),
+    );
 
     _controller.addListener(() {
       final focused = _controller.focusedPanel;

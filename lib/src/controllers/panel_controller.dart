@@ -14,6 +14,13 @@ abstract base class PanelController extends ChangeNotifier {
   /// Default to false.
   final bool useOverlay;
 
+  /// [PanelConstraints] defines the boundary of the entire panel system,
+  /// which is used for calculating/restricting panel positions and sizes.
+  ///
+  /// Sometimes, we do not the panel to be same as the entire screen.
+  /// For example, when the panel is used in a desktop-like app,
+  /// we may want the panel to be constrained within the "window" of the app
+  /// instead of the entire screen.
   PanelConstraints get constraints;
   set constraints(PanelConstraints newConstraints);
 
@@ -48,11 +55,50 @@ abstract base class PanelController extends ChangeNotifier {
   PanelController._(this.useOverlay);
 
   factory PanelController({
+    /// [PanelConstraints] defines the boundary of the entire panel system,
+    /// which is used for calculating/restricting panel positions and sizes.
+    ///
+    /// Sometimes, we do not the panel to be same as the entire screen.
+    /// For example, when the panel is used in a desktop-like app,
+    /// we may want the panel to be constrained within the "window" of the app
+    /// instead of the entire screen.
+    ///
+    /// if not given, the controller will use the screen size as the default constraints.
     PanelConstraints? initialConstraints,
+
+    /// Initial UI decoration configuration for panels,
+    ///
+    /// See also:
+    ///   - [PanelConfig] for what kind of configuration can be set.
     PanelConfig initialConfig,
+
+    /// The strategy for determining the initial position of newly opened panels.
+    /// If a [Panel] has no specific initial position, the controller will use this strategy to find a suitable position for it.
+    ///
+    /// There are several built-in positioners provided by the package,
+    /// and you can also implement your own by implementing the [PanelPositioner] interface.
+    ///
+    /// See also:
+    ///  - [PanelPositioner] for how to implement a custom positioner.
     PanelPositioner positioner,
+
+    /// The strategy for determining how panels can be resized by dragging their edges.
+    /// If a [Panel] has no specific sizer, the controller will use this strategy to determine how it can be resized.
+    ///
+    /// There are several built-in sizers provided by the package,
+    /// and you can also implement your own by implementing the [PanelSizer] interface.
+    ///
+    /// See also:
+    /// - [PanelSizer] for how to implement a custom sizer.
     PanelSizer sizer,
+
+    /// The initial mode of the panel system.
     PanelMode initialMode,
+
+    /// Whether this controller uses an overlay to display panels.
+    /// If false, the panels are expected to be displayed in a [Route] above the current context.
+    /// If true, the controller will ensure that panels are displayed in an [Overlay] above the current context,
+    /// which will ensure panels are not overridden by other routes.
     bool useOverlay,
   }) = _PanelControllerImpl;
 }
