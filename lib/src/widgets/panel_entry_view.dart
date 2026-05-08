@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-import '../models/panel.dart';
 import '../models/resize_direction.dart';
 
 class PanelEntryView extends StatefulWidget {
@@ -72,9 +72,19 @@ class _PanelEntryViewState extends State<PanelEntryView> {
 
   @override
   Widget build(BuildContext context) {
-    Widget view = widget.entry.builder(
-      context,
-      widget.entry.controller,
+    Widget view = PanelMasterScope(
+      masterId: switch (widget.entry) {
+        MasterPanelEntry m => m.id,
+        SlavePanelEntry s => s.masterId,
+      },
+      child: Builder(
+        builder: (inner) {
+          return widget.entry.builder(
+            inner,
+            widget.entry.controller,
+          );
+        },
+      ),
     );
 
     if (widget.entry.useBuiltInView) {

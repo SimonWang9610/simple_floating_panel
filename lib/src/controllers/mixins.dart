@@ -3,7 +3,7 @@ import 'package:simple_floating_panel/simple_floating_panel.dart';
 
 import '../components/panel_shower.dart';
 
-base mixin PanelViewDelegateImpl on PanelController implements PanelViewDelegate {
+base mixin PanelViewDelegateImpl on PanelController, PanelStateSetterMixin implements PanelViewDelegate {
   @override
   void onPanelMinimize(Object panelId) {
     if (markPanelMinimized(panelId)) {
@@ -32,6 +32,15 @@ base mixin PanelViewDelegateImpl on PanelController implements PanelViewDelegate
   }
 
   bool markPanelMinimized(Object panelId);
+
+  PanelViewController createViewController(Panel panel) {
+    return PanelViewController(
+      panel.id,
+      delegate: this,
+      initialState: _getInitialStateOf(panel),
+      initialConstraints: constraints,
+    );
+  }
 }
 
 base mixin PanelStateSetterMixin on PanelController {
@@ -119,6 +128,27 @@ base mixin PanelStateSetterMixin on PanelController {
 
   set sizer(PanelSizer newSizer) {
     _sizer = newSizer;
+  }
+
+  PanelGeometry defaultGeometryOf(Panel panel) {
+    final size = panel.initialSize ?? sizer.constrain(constraints);
+
+    final origin = panel.initialPosition ??
+        positioner.find(
+          panels.map((p) => p.controller.value.geometry),
+          constraints,
+          size,
+        );
+
+    return PanelGeometry(origin: origin, size: size);
+  }
+
+  PanelViewState _getInitialStateOf(Panel panel) {
+    return PanelViewState(
+      geometry: defaultGeometryOf(panel),
+      mode: PanelViewMode.normal,
+      title: panel.title ?? "Untitled - ${panel.id}",
+    );
   }
 }
 

@@ -28,7 +28,7 @@ final class PanelShower {
 
     final CapturedThemes themes = InheritedTheme.capture(
       from: context,
-      to: Navigator.of(context, rootNavigator: false).context,
+      to: Navigator.maybeOf(context, rootNavigator: false)?.context,
     );
 
     _floating ??= FloatingController.overlay(

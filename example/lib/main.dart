@@ -1,203 +1,87 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+
+import 'pages/master_only_panels_page.dart';
+import 'pages/master_slave_panels_page.dart';
+import 'pages/panel_scope_provided_controller_page.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final PanelController _providedController = PanelController(
+    positioner: PanelPositioner.follow(
+      screenAlignment: Alignment.topRight,
+      panelAlignment: Alignment.topRight,
+      offset: const Offset(-20, 20),
+    ),
+  );
+
+  @override
+  void dispose() {
+    _providedController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const FloatingPanelExample(),
+      title: 'Simple Floating Panel Examples',
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      home: _ExampleMenuPage(providedController: _providedController),
     );
   }
 }
 
-class FloatingPanelExample extends StatefulWidget {
-  const FloatingPanelExample({super.key});
+class _ExampleMenuPage extends StatelessWidget {
+  final PanelController providedController;
 
-  @override
-  State<FloatingPanelExample> createState() => _FloatingPanelExampleState();
-}
-
-class _FloatingPanelExampleState extends State<FloatingPanelExample> {
-  PanelController? _panelController;
-
-  @override
-  void dispose() {
-    _panelController?.dispose();
-    super.dispose();
-  }
+  const _ExampleMenuPage({required this.providedController});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Floating Panel Example')),
-      body: Center(
-        child: Column(
-          spacing: 20,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                _showPanel();
-              },
-              child: const Text('Show Panel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Pop route'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Dialog'),
-                    content: const Text('This is a dialog.'),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
-                  ),
-                );
-              },
-              child: const Text('Show dialog'),
-            ),
-            const Spacer(),
-            if (_panelController != null)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: FloatingPanelDock(controller: _panelController!),
-              ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (_panelController == null) return;
-
-          if (_panelController?.mode == PanelMode.window) {
-            _panelController!.mode = PanelMode.preview;
-          } else {
-            _panelController!.mode = PanelMode.window;
-          }
-        },
-        child: const Icon(Icons.fullscreen),
-      ),
-    );
-  }
-
-  void _showPanel() {
-    final screenSize = MediaQuery.sizeOf(context);
-
-    _panelController ??= PanelController(
-      // initialConstraints: PanelConstraints.fromPadding(
-      //   screenSize,
-      //   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 80),
-      // ),
-      initialConstraints: PanelConstraints.scale(screenSize, maxSizeRatio: 0.8),
-    );
-
-    _panelController!.open(
-      context,
-      Panel(
-        id: 'main_panel',
-        title: 'Main Panel',
-        initialSize: const Size(400, 400),
-        builder: (_, c) => _PanelWidget(controller: c),
-      ),
-    );
-
-    setState(() {});
-  }
-}
-
-class _PanelWidget extends StatefulWidget {
-  final PanelViewController controller;
-  const _PanelWidget({required this.controller});
-
-  @override
-  State<_PanelWidget> createState() => _PanelWidgetState();
-}
-
-class _PanelWidgetState extends State<_PanelWidget> {
-  Timer? _timer;
-
-  int _counter = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _counter++;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.controller,
-      builder: (_, settings, _) {
-        return Material(
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        if (settings.mode == PanelViewMode.maximized) {
-                          widget.controller.restore();
-                        } else {
-                          widget.controller.maximize();
-                        }
-                      },
-                      icon: const Icon(Icons.fullscreen),
-                    ),
-                    Expanded(child: Text(settings.title ?? "Untitled Panel")),
-                    IconButton(onPressed: widget.controller.close, icon: const Icon(Icons.close)),
-                  ],
-                ),
-                ElevatedButton(onPressed: () => _open(context), child: const Text('Open sub panel')),
-                Text('Counter: $_counter'),
-              ],
-            ),
+      appBar: AppBar(title: const Text('Example Pages')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ListTile(
+            leading: const Icon(Icons.account_tree_outlined),
+            title: const Text('1) PanelScope with provided PanelController'),
+            subtitle: const Text('Page uses PanelScope.of(context) and a controller provided from parent.'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => PanelScopeProvidedControllerPage(controller: providedController)),
+              );
+            },
           ),
-        );
-      },
-    );
-  }
-
-  void _open(BuildContext context) {
-    final panelController = PanelScope.of(context);
-
-    final key = UniqueKey();
-    panelController.open(
-      context,
-      Panel(
-        id: key,
-        title: "Sub Panel - $key",
-        maintainState: false,
-        builder: (_, c) => _PanelWidget(controller: c),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.dashboard_outlined),
+            title: const Text('2) Master-only panels'),
+            subtitle: const Text('Shows independent master panels only.'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MasterOnlyPanelsPage()));
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.device_hub_outlined),
+            title: const Text('3) Master-slave panels'),
+            subtitle: const Text('Shows master panel and attached slave panels.'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MasterSlavePanelsPage()));
+            },
+          ),
+        ],
       ),
     );
   }
