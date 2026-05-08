@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_floating_panel/panel_dock.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
 class MasterSlavePanelsPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _MasterSlavePanelsPageState extends State<MasterSlavePanelsPage> {
       positioner: PanelPositioner.follow(
         screenAlignment: Alignment.bottomLeft,
         panelAlignment: Alignment.bottomLeft,
-        offset: const Offset(20, -20),
+        offset: const Offset(20, -40),
       ),
     );
 
@@ -50,7 +51,7 @@ class _MasterSlavePanelsPageState extends State<MasterSlavePanelsPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Master-Slave Panels')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 12,
@@ -131,6 +132,8 @@ class _MasterSlavePanelsPageState extends State<MasterSlavePanelsPage> {
               },
               child: const Text('Toggle preview/window mode'),
             ),
+            const Spacer(),
+            FloatingPanelDock(controller: _controller),
           ],
         ),
       ),
