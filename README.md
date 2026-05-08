@@ -9,12 +9,10 @@ Create draggable, resizable, minimizable, maximizable panels with built-in z-ord
 ## Demo
 
 ### Multi-panel workflow
-
-![Multi floating panel demo](assets/multi-floating-panel-demo.gif)
+<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif?raw=true" width="320">
 
 ### Minimize / restore with dock
-
-![Panel minimize restore demo](assets/panel-minimize-restore-demo.gif)
+	<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-minimize-restore-demo.gif?raw=true" width="320">
 
 ---
 
