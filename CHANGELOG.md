@@ -1,3 +1,8 @@
+## 1.1.0
+
+- feat: Add `PanelMasterScope` for opening slave panels from master panel context, enabling dynamic master-slave relationships and nested panel workflows.
+- feat: support master-slave panel relationships without pre-defining master panel IDs, allowing more flexible panel orchestration.
+
 ## 1.0.0
 
 Initial stable release of `simple_floating_panel`.
