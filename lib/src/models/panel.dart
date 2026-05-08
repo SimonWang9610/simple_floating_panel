@@ -57,7 +57,7 @@ sealed class Panel {
   /// All Widgets can also use [PanelScope.of] to access the master [PanelController] to open new panels or switch modes.
   final PanelWidgetBuilder builder;
 
-  const Panel({
+  const Panel._({
     required this.id,
     required this.builder,
     this.title,
@@ -67,6 +67,47 @@ sealed class Panel {
     this.addRepaintBoundary = true,
     this.useBuiltInView = true,
   });
+
+  /// Creates a new panel with the given parameters.
+  ///
+  /// If [masterId] is provided, the panel will be attached to the master panel with the corresponding id,
+  /// and will be automatically closed when the master panel is closed.
+  factory Panel({
+    required Object id,
+    required PanelWidgetBuilder builder,
+    String? title,
+    Offset? initialPosition,
+    Size? initialSize,
+    bool maintainState = true,
+    bool addRepaintBoundary = true,
+    bool useBuiltInView = true,
+    Object? masterId,
+  }) {
+    if (masterId != null) {
+      return SlavePanel._(
+        id: id,
+        builder: builder,
+        title: title,
+        initialPosition: initialPosition,
+        initialSize: initialSize,
+        maintainState: maintainState,
+        addRepaintBoundary: addRepaintBoundary,
+        useBuiltInView: useBuiltInView,
+        masterId: masterId,
+      );
+    } else {
+      return MasterPanel._(
+        id: id,
+        builder: builder,
+        title: title,
+        initialPosition: initialPosition,
+        initialSize: initialSize,
+        maintainState: maintainState,
+        addRepaintBoundary: addRepaintBoundary,
+        useBuiltInView: useBuiltInView,
+      );
+    }
+  }
 }
 
 /// A panel that is attached to a specific parent panel,
@@ -76,11 +117,12 @@ sealed class Panel {
 /// and attach this panel to it.
 ///
 /// If the master panel is not found, it will throws an exception and the attached panel will not be opened.
-final class AttachedPanel extends Panel {
+final class SlavePanel extends Panel {
   /// The id of the master panel to which this panel is attached.
   final Object masterId;
 
-  const AttachedPanel({
+  const SlavePanel._({
+    required this.masterId,
     required super.id,
     required super.builder,
     super.title,
@@ -89,14 +131,13 @@ final class AttachedPanel extends Panel {
     super.maintainState,
     super.addRepaintBoundary,
     super.useBuiltInView,
-    required this.masterId,
-  });
+  }) : super._();
 }
 
 /// A master panel is not managed by other panels, will have its own lifecycle,
 /// [AttachedPanel]s can be attached to it, but it will not be automatically closed when the attached panels are closed.
 final class MasterPanel extends Panel {
-  const MasterPanel({
+  const MasterPanel._({
     required super.id,
     required super.builder,
     super.title,
@@ -105,5 +146,5 @@ final class MasterPanel extends Panel {
     super.maintainState,
     super.addRepaintBoundary,
     super.useBuiltInView,
-  });
+  }) : super._();
 }

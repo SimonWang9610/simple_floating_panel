@@ -154,4 +154,9 @@ final class _DelegateSpy implements PanelViewDelegate {
   void onPanelRestore(Object panelId) {
     restored.add(panelId);
   }
+
+  @override
+  PanelEntry? entryOf(Object panelId) {
+    return null;
+  }
 }

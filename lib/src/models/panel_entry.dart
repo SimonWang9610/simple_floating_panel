@@ -10,67 +10,95 @@ sealed class PanelEntry {
   final PanelWidgetBuilder builder;
   final PanelViewController controller;
 
-  const PanelEntry({
+  const PanelEntry._({
     required this.id,
     required this.builder,
     required this.controller,
     required this.useBuiltInView,
     required this.addRepaintBoundary,
   });
+
+  factory PanelEntry({
+    required Object id,
+    required PanelWidgetBuilder builder,
+    required PanelViewController controller,
+    bool useBuiltInView = true,
+    bool addRepaintBoundary = true,
+    Object? masterId,
+  }) {
+    if (masterId != null) {
+      return SlavePanelEntry._(
+        id: id,
+        builder: builder,
+        controller: controller,
+        useBuiltInView: useBuiltInView,
+        addRepaintBoundary: addRepaintBoundary,
+        masterId: masterId,
+      );
+    } else {
+      return MasterPanelEntry._(
+        id: id,
+        builder: builder,
+        controller: controller,
+        useBuiltInView: useBuiltInView,
+        addRepaintBoundary: addRepaintBoundary,
+      );
+    }
+  }
 }
 
-final class AttachedPanelEntry extends PanelEntry {
+final class SlavePanelEntry extends PanelEntry {
   final Object masterId;
 
-  const AttachedPanelEntry({
+  const SlavePanelEntry._({
     required super.id,
     required super.builder,
     required super.controller,
     required super.useBuiltInView,
     required super.addRepaintBoundary,
     required this.masterId,
-  });
+  }) : super._();
 }
 
 final class MasterPanelEntry extends PanelEntry {
-  final List<Object> attachedPanels;
+  final List<Object> slaves;
 
-  const MasterPanelEntry({
+  const MasterPanelEntry._({
     required super.id,
     required super.builder,
     required super.controller,
     required super.useBuiltInView,
     required super.addRepaintBoundary,
-    this.attachedPanels = const [],
-  });
+    this.slaves = const [],
+  }) : super._();
 
   MasterPanelEntry attach(Object attachedPanelId) {
-    if (attachedPanels.contains(attachedPanelId)) {
+    if (slaves.contains(attachedPanelId)) {
       return this;
     }
 
-    return MasterPanelEntry(
+    return MasterPanelEntry._(
       id: id,
       builder: builder,
       controller: controller,
       useBuiltInView: useBuiltInView,
       addRepaintBoundary: addRepaintBoundary,
-      attachedPanels: [...attachedPanels, attachedPanelId],
+      slaves: [...slaves, attachedPanelId],
     );
   }
 
   MasterPanelEntry detach(Object attachedPanelId) {
-    if (!attachedPanels.contains(attachedPanelId)) {
+    if (!slaves.contains(attachedPanelId)) {
       return this;
     }
 
-    return MasterPanelEntry(
+    return MasterPanelEntry._(
       id: id,
       builder: builder,
       controller: controller,
       useBuiltInView: useBuiltInView,
       addRepaintBoundary: addRepaintBoundary,
-      attachedPanels: attachedPanels.where((id) => id != attachedPanelId).toList(),
+      slaves: slaves.where((id) => id != attachedPanelId).toList(),
     );
   }
 }

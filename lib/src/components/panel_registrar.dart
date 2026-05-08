@@ -15,8 +15,8 @@ final class PanelRegistrar {
     switch (panel) {
       case MasterPanel m:
         return _registerMasterPanel(m, viewControllerCreator(m));
-      case AttachedPanel a:
-        return _registerAttachedPanel(a, viewControllerCreator(a));
+      case SlavePanel s:
+        return _registerSlavePanel(s, viewControllerCreator(s));
     }
   }
 
@@ -26,16 +26,17 @@ final class PanelRegistrar {
 
     return switch (entry) {
       MasterPanelEntry m => _unregisterMasterPanel(m),
-      AttachedPanelEntry a => _unregisterAttachedPanel(a),
+      SlavePanelEntry s => _unregisterSalvePanel(s),
     };
   }
 
   void unregisterAll() {
-    for (final entry in _panels.values) {
+    final entries = _panels.values.toList();
+    _panels.clear();
+
+    for (final entry in entries) {
       entry.controller.dispose();
     }
-
-    _panels.clear();
   }
 
   PanelEntry? entryOf(Object panelId) {
@@ -46,16 +47,16 @@ final class PanelRegistrar {
     final entry = _panels[attachedPanelId];
 
     return switch (entry) {
-      AttachedPanelEntry a => a.masterId,
+      SlavePanelEntry s => s.masterId,
       _ => null,
     };
   }
 
-  List<Object> attachedPanelsOf(Object masterPanelId) {
+  List<Object> slavesOf(Object masterPanelId) {
     final entry = _panels[masterPanelId];
 
     return switch (entry) {
-      MasterPanelEntry m => m.attachedPanels,
+      MasterPanelEntry m => m.slaves,
       _ => [],
     };
   }
@@ -65,7 +66,7 @@ final class PanelRegistrar {
       throw StateError('A panel with id "${panel.id}" is already registered.');
     }
 
-    final entry = MasterPanelEntry(
+    final entry = PanelEntry(
       id: panel.id,
       builder: panel.builder,
       controller: viewController,
@@ -79,18 +80,18 @@ final class PanelRegistrar {
   }
 
   List<Object> _unregisterMasterPanel(MasterPanelEntry master) {
-    final attachedPanels = master.attachedPanels;
+    final slaves = master.slaves;
 
-    for (final attachedPanelId in attachedPanels) {
-      _panels.remove(attachedPanelId)?.controller.dispose();
+    for (final slaveId in slaves) {
+      _panels.remove(slaveId)?.controller.dispose();
     }
 
     master.controller.dispose();
 
-    return [master.id, ...attachedPanels];
+    return [master.id, ...slaves];
   }
 
-  PanelEntry _registerAttachedPanel(AttachedPanel panel, PanelViewController viewController) {
+  PanelEntry _registerSlavePanel(SlavePanel panel, PanelViewController viewController) {
     if (_panels.containsKey(panel.id)) {
       throw StateError('A panel with id "${panel.id}" is already registered.');
     }
@@ -105,7 +106,7 @@ final class PanelRegistrar {
       throw StateError('Panel with id ${panel.masterId} is not a master panel for attached panel ${panel.id}');
     }
 
-    final entry = AttachedPanelEntry(
+    final entry = PanelEntry(
       id: panel.id,
       builder: panel.builder,
       controller: viewController,
@@ -120,7 +121,7 @@ final class PanelRegistrar {
     return entry;
   }
 
-  List<Object> _unregisterAttachedPanel(AttachedPanelEntry attached) {
+  List<Object> _unregisterSalvePanel(SlavePanelEntry attached) {
     final masterEntry = _panels[attached.masterId];
 
     assert(masterEntry is MasterPanelEntry,

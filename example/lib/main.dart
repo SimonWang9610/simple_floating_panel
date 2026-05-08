@@ -73,6 +73,12 @@ class _FloatingPanelExampleState extends State<FloatingPanelExample> {
               },
               child: const Text('Show dialog'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                _panelController?.closeAll();
+              },
+              child: Text("Close all panels"),
+            ),
             const Spacer(),
             if (_panelController != null)
               Align(
@@ -110,7 +116,7 @@ class _FloatingPanelExampleState extends State<FloatingPanelExample> {
 
     _panelController!.open(
       context,
-      MasterPanel(
+      Panel(
         id: 'main_panel',
         title: 'Main Panel',
         initialSize: const Size(400, 400),
@@ -189,18 +195,16 @@ class _PanelWidgetState extends State<_PanelWidget> {
   }
 
   void _open(BuildContext context) {
-    final panelController = PanelScope.of(context);
-
     final key = UniqueKey();
-    panelController.open(
-      context,
-      AttachedPanel(
+
+    PanelMasterScope.open(context, (masterId) {
+      return Panel(
         id: key,
         title: "Sub Panel - $key",
-        masterId: 'main_panel',
+        masterId: masterId,
         maintainState: false,
         builder: (_, c) => _PanelWidget(controller: c),
-      ),
-    );
+      );
+    });
   }
 }

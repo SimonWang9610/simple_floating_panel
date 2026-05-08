@@ -25,6 +25,7 @@ abstract interface class PanelViewController extends ValueListenable<PanelViewSt
 
   void close();
 
+  @internal
   void dispose();
 
   PanelEntry get entry;
@@ -46,7 +47,7 @@ abstract interface class PanelViewDelegate {
   void onPanelClosed(Object panelId);
   void onPanelFocused(Object panelId);
 
-  PanelEntry entryOf(Object panelId);
+  PanelEntry? entryOf(Object panelId);
 }
 
 final class _ViewControllerImpl extends ChangeNotifier implements PanelViewController {
@@ -72,7 +73,14 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
   PanelViewState get value => _state;
 
   @override
-  PanelEntry get entry => delegate.entryOf(panelId);
+  PanelEntry get entry {
+    final entry = delegate.entryOf(panelId);
+    if (entry == null) {
+      throw StateError('No panel with id "$panelId" is registered in the delegate.');
+    }
+
+    return entry;
+  }
 
   @override
   set constraints(PanelConstraints constraints) {

@@ -72,9 +72,15 @@ class _PanelEntryViewState extends State<PanelEntryView> {
 
   @override
   Widget build(BuildContext context) {
-    Widget view = widget.entry.builder(
-      context,
-      widget.entry.controller,
+    Widget view = PanelMasterScope(
+      masterId: switch (widget.entry) {
+        MasterPanelEntry m => m.id,
+        SlavePanelEntry s => s.masterId,
+      },
+      child: widget.entry.builder(
+        context,
+        widget.entry.controller,
+      ),
     );
 
     if (widget.entry.useBuiltInView) {
