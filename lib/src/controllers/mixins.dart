@@ -147,7 +147,7 @@ base mixin PanelStateSetterMixin on PanelController {
     return PanelViewState(
       geometry: defaultGeometryOf(panel),
       mode: PanelViewMode.normal,
-      title: panel.title ?? "Untitled",
+      title: panel.title ?? "Untitled - ${panel.id}",
     );
   }
 }

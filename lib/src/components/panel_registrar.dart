@@ -14,9 +14,9 @@ final class PanelRegistrar {
   PanelEntry register(Panel panel, {required PanelViewControllerCreator viewControllerCreator}) {
     switch (panel) {
       case MasterPanel m:
-        return _registerMasterPanel(m, viewControllerCreator(m));
+        return _registerMasterPanel(m, viewControllerCreator);
       case SlavePanel s:
-        return _registerSlavePanel(s, viewControllerCreator(s));
+        return _registerSlavePanel(s, viewControllerCreator);
     }
   }
 
@@ -26,7 +26,7 @@ final class PanelRegistrar {
 
     return switch (entry) {
       MasterPanelEntry m => _unregisterMasterPanel(m),
-      SlavePanelEntry s => _unregisterSalvePanel(s),
+      SlavePanelEntry s => _unregisterSlavePanel(s),
     };
   }
 
@@ -61,7 +61,7 @@ final class PanelRegistrar {
     };
   }
 
-  PanelEntry _registerMasterPanel(MasterPanel panel, PanelViewController viewController) {
+  PanelEntry _registerMasterPanel(MasterPanel panel, PanelViewControllerCreator viewControllerCreator) {
     if (_panels.containsKey(panel.id)) {
       throw StateError('A panel with id "${panel.id}" is already registered.');
     }
@@ -69,7 +69,7 @@ final class PanelRegistrar {
     final entry = PanelEntry(
       id: panel.id,
       builder: panel.builder,
-      controller: viewController,
+      controller: viewControllerCreator(panel),
       useBuiltInView: panel.useBuiltInView,
       addRepaintBoundary: panel.addRepaintBoundary,
     );
@@ -91,7 +91,7 @@ final class PanelRegistrar {
     return [master.id, ...slaves];
   }
 
-  PanelEntry _registerSlavePanel(SlavePanel panel, PanelViewController viewController) {
+  PanelEntry _registerSlavePanel(SlavePanel panel, PanelViewControllerCreator viewControllerCreator) {
     if (_panels.containsKey(panel.id)) {
       throw StateError('A panel with id "${panel.id}" is already registered.');
     }
@@ -109,7 +109,7 @@ final class PanelRegistrar {
     final entry = PanelEntry(
       id: panel.id,
       builder: panel.builder,
-      controller: viewController,
+      controller: viewControllerCreator(panel),
       useBuiltInView: panel.useBuiltInView,
       addRepaintBoundary: panel.addRepaintBoundary,
       masterId: panel.masterId,
@@ -121,7 +121,7 @@ final class PanelRegistrar {
     return entry;
   }
 
-  List<Object> _unregisterSalvePanel(SlavePanelEntry attached) {
+  List<Object> _unregisterSlavePanel(SlavePanelEntry attached) {
     final masterEntry = _panels[attached.masterId];
 
     assert(masterEntry is MasterPanelEntry,
@@ -132,7 +132,6 @@ final class PanelRegistrar {
     }
 
     attached.controller.dispose();
-    _panels.remove(attached.id);
 
     return [attached.id];
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
-import 'package:simple_floating_panel/src/components/panel_registrar.dart';
 
 import '../components/z_index_manager.dart';
+import '../components/panel_registrar.dart';
 import 'mixins.dart';
 
 abstract base class PanelController extends ChangeNotifier {
@@ -14,13 +14,6 @@ abstract base class PanelController extends ChangeNotifier {
   /// Default to false.
   final bool useOverlay;
 
-  /// [PanelConstraints] defines the boundary of the entire panel system,
-  /// which is used for calculating/restricting panel positions and sizes.
-  ///
-  /// Sometimes, we do not the panel to be same as the entire screen.
-  /// For example, when the panel is used in a desktop-like app,
-  /// we may want the panel to be constrained within the "window" of the app
-  /// instead of the entire screen.
   PanelConstraints get constraints;
   set constraints(PanelConstraints newConstraints);
 
@@ -58,7 +51,7 @@ abstract base class PanelController extends ChangeNotifier {
     /// [PanelConstraints] defines the boundary of the entire panel system,
     /// which is used for calculating/restricting panel positions and sizes.
     ///
-    /// Sometimes, we do not the panel to be same as the entire screen.
+    /// Sometimes, we do not want the panel to be same as the entire screen.
     /// For example, when the panel is used in a desktop-like app,
     /// we may want the panel to be constrained within the "window" of the app
     /// instead of the entire screen.

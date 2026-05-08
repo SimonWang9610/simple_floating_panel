@@ -97,7 +97,7 @@ controller.open(
 ```
 
 ### 3) Open a slave panel from current panel context
-> `context` must be inside a panel view built by the `builder` of a master/salve panel.
+> `context` must be inside a panel view built by the `builder` of a master/slave panel.
 
 ```dart
 PanelMasterScope.open(context, (masterId) {

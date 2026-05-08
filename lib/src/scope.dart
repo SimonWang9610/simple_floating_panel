@@ -45,7 +45,7 @@ class PanelScope extends InheritedWidget {
 /// This is useful for slave panels to know which master panel they belong to,
 /// so that they can interact with the master panel or other slave panels of the same master.
 ///
-/// You should do not use this scope directly, as it is an implementation detail of the built-in panel view.
+/// You should not use this scope directly, as it is an implementation detail of the built-in panel view.
 ///
 /// Instead, you can use [PanelMasterScope.open] to open a new panel that may be a slave panel of the current master panel;
 /// however, make sure the context you use to call [PanelMasterScope.open] is a descendant of a showing panel.

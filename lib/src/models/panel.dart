@@ -135,7 +135,7 @@ final class SlavePanel extends Panel {
 }
 
 /// A master panel is not managed by other panels, will have its own lifecycle,
-/// [AttachedPanel]s can be attached to it, but it will not be automatically closed when the attached panels are closed.
+/// [SlavePanel]s can be attached to it, but it will not be automatically closed when the attached panels are closed.
 final class MasterPanel extends Panel {
   const MasterPanel._({
     required super.id,
