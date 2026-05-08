@@ -27,6 +27,8 @@ abstract interface class PanelViewController extends ValueListenable<PanelViewSt
 
   void dispose();
 
+  PanelEntry get entry;
+
   set constraints(PanelConstraints constraints);
 
   factory PanelViewController(
@@ -43,6 +45,8 @@ abstract interface class PanelViewDelegate {
   void onPanelRestore(Object panelId);
   void onPanelClosed(Object panelId);
   void onPanelFocused(Object panelId);
+
+  PanelEntry entryOf(Object panelId);
 }
 
 final class _ViewControllerImpl extends ChangeNotifier implements PanelViewController {
@@ -66,6 +70,9 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
 
   @override
   PanelViewState get value => _state;
+
+  @override
+  PanelEntry get entry => delegate.entryOf(panelId);
 
   @override
   set constraints(PanelConstraints constraints) {

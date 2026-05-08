@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-typedef PanelWidgetBuilder = Widget Function(BuildContext context, PanelViewController controller);
-
-class Panel {
+sealed class Panel {
   final Object id;
 
   /// Whether the panel's state should be maintained when it's not visible,
@@ -71,18 +69,41 @@ class Panel {
   });
 }
 
-class PanelEntry {
-  final Object id;
-  final bool useBuiltInView;
-  final bool addRepaintBoundary;
-  final PanelWidgetBuilder builder;
-  final PanelViewController controller;
+/// A panel that is attached to a specific parent panel,
+/// and will be automatically closed when the parent panel is closed.
+///
+/// Given [masterId], the [PanelController] will try to find the master panel with the corresponding id,
+/// and attach this panel to it.
+///
+/// If the master panel is not found, it will throws an exception and the attached panel will not be opened.
+final class AttachedPanel extends Panel {
+  /// The id of the master panel to which this panel is attached.
+  final Object masterId;
 
-  const PanelEntry({
-    required this.id,
-    required this.builder,
-    required this.controller,
-    required this.useBuiltInView,
-    required this.addRepaintBoundary,
+  const AttachedPanel({
+    required super.id,
+    required super.builder,
+    super.title,
+    super.initialPosition,
+    super.initialSize,
+    super.maintainState,
+    super.addRepaintBoundary,
+    super.useBuiltInView,
+    required this.masterId,
+  });
+}
+
+/// A master panel is not managed by other panels, will have its own lifecycle,
+/// [AttachedPanel]s can be attached to it, but it will not be automatically closed when the attached panels are closed.
+final class MasterPanel extends Panel {
+  const MasterPanel({
+    required super.id,
+    required super.builder,
+    super.title,
+    super.initialPosition,
+    super.initialSize,
+    super.maintainState,
+    super.addRepaintBoundary,
+    super.useBuiltInView,
   });
 }

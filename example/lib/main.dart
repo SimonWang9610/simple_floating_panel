@@ -109,7 +109,7 @@ class _FloatingPanelExampleState extends State<FloatingPanelExample> {
 
     _panelController!.open(
       context,
-      Panel(
+      MasterPanel(
         id: 'main_panel',
         title: 'Main Panel',
         initialSize: const Size(400, 400),
@@ -193,9 +193,10 @@ class _PanelWidgetState extends State<_PanelWidget> {
     final key = UniqueKey();
     panelController.open(
       context,
-      Panel(
+      AttachedPanel(
         id: key,
         title: "Sub Panel - $key",
+        masterId: 'main_panel',
         maintainState: false,
         builder: (_, c) => _PanelWidget(controller: c),
       ),

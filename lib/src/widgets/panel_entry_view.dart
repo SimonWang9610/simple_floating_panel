@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-import '../models/panel.dart';
 import '../models/resize_direction.dart';
 
 class PanelEntryView extends StatefulWidget {
