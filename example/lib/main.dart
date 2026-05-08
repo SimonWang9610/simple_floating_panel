@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
+import 'package:simple_floating_panel/panel_dock.dart';
 
 void main() {
   runApp(const MyApp());
