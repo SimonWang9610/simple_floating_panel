@@ -12,7 +12,7 @@ Create draggable, resizable, minimizable, maximizable panels with built-in z-ord
 <img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif?raw=true" width="320">
 
 ### Minimize / restore with dock
-	<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-minimize-restore-demo.gif?raw=true" width="320">
+<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-minimize-restore-demo.gif?raw=true" width="320">
 
 ---
 
