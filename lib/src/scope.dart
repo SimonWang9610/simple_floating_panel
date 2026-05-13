@@ -105,3 +105,42 @@ class PanelMasterScope extends InheritedWidget {
     controller.open(context, panelBuilder(masterId));
   }
 }
+
+class PanelEntryScope extends InheritedWidget {
+  final PanelEntry entry;
+
+  const PanelEntryScope({super.key, required this.entry, required super.child});
+
+  @override
+  bool updateShouldNotify(covariant PanelEntryScope oldWidget) {
+    return oldWidget.entry != entry;
+  }
+
+  static PanelEntry of(BuildContext context) {
+    final entry = maybeOf(context);
+
+    if (entry == null) {
+      throw FlutterError(
+        'PanelEntryScope.of() called with a context that does not contain a PanelEntryScope.\n'
+        'Make sure the widget is a descendant of [PanelEntryScope] that is created for a panel.',
+      );
+    }
+
+    return entry;
+  }
+
+  static PanelEntry? maybeOf(BuildContext context) {
+    final scope = context.dependOnInheritedWidgetOfExactType<PanelEntryScope>();
+    return scope?.entry;
+  }
+
+  static Object? ofId(BuildContext context) {
+    final entry = of(context);
+    return entry.id;
+  }
+
+  static Object? maybeOfId(BuildContext context) {
+    final entry = maybeOf(context);
+    return entry?.id;
+  }
+}

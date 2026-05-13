@@ -165,9 +165,7 @@ class _PanelGridState extends State<_PanelGrid> {
         Positioned.fill(
           child: GestureDetector(
             onTap: config.previewStyle.barrierDismissible ? widget.switchToWindowMode : null,
-            child: ColoredBox(
-              color: config.previewStyle.barrierColor ?? Colors.transparent,
-            ),
+            child: ColoredBox(color: config.previewStyle.barrierColor ?? Colors.transparent),
           ),
         ),
         Positioned(
@@ -179,24 +177,25 @@ class _PanelGridState extends State<_PanelGrid> {
             delegate: PanelGridFlowDelegate(
               entries: _panels,
               panelConstraints: widget.panelConstraints,
-              horizontalSpacing: config.previewStyle.horizontalSpacing,
-              verticalSpacing: config.previewStyle.verticalSpacing,
-              expandLastRow: config.previewStyle.expandLastRow,
+              style: config.previewStyle,
             ),
             children: [
               for (final entry in _panels)
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: MouseRegion(
-                    onHover: (_) {
-                      _focusing.value = entry.id;
-                    },
-                    child: GestureDetector(
-                      onTap: () {
-                        entry.controller.bringToFront();
-                        widget.switchToWindowMode?.call();
+                  child: Center(
+                    child: MouseRegion(
+                      onHover: (_) {
+                        _focusing.value = entry.id;
                       },
-                      child: Center(
+                      onExit: (event) {
+                        _focusing.value = null;
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          entry.controller.bringToFront();
+                          widget.switchToWindowMode?.call();
+                        },
                         child: ValueListenableBuilder(
                           valueListenable: _focusing,
                           builder: (context, focusedId, child) {

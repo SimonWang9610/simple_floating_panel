@@ -1,3 +1,7 @@
+## 1.1.1
+
+- feat: Add `PanelEntryScope` helper APIs (`ofId` and `maybeOfId`) to simplify reading panel ids from panel context.
+
 ## 1.1.0
 
 - feat: Add `PanelMasterScope` for opening slave panels from master panel context, enabling dynamic master-slave relationships and nested panel workflows.
