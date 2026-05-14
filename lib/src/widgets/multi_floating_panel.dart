@@ -98,6 +98,7 @@ class _PanelStack extends StatelessWidget {
               child: config.wrap(
                 PanelEntryView(
                   key: PanelCacheKeyStore.getCacheKeyForPanel(context, entry.id),
+                  resizeThreshold: config.resizeThreshold,
                   entry: entry,
                 ),
                 focused: focusedPanelId == entry.id,
@@ -205,6 +206,7 @@ class _PanelGridState extends State<_PanelGrid> {
                                 child: PanelEntryView(
                                   key: PanelCacheKeyStore.getCacheKeyForPanel(context, entry.id),
                                   enabled: false,
+                                  resizeThreshold: config.resizeThreshold,
                                   entry: entry,
                                 ),
                               ),
