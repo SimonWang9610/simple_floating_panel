@@ -1,6 +1,6 @@
 name: simple_floating_panel
 description: "Desktop-style draggable and resizable floating panels for Flutter, with multi-panel management, preview mode, and dock UX."
-version: 1.1.1
+version: 1.1.2
 homepage: https://github.com/SimonWang9610/simple_floating_panel
 repository: https://github.com/SimonWang9610/simple_floating_panel
 issue_tracker: https://github.com/SimonWang9610/simple_floating_panel/issues

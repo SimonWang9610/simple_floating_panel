@@ -1,3 +1,8 @@
+## 1.1.2
+
+- refactor: Rework panel entry view gesture handling for move and resize interactions.
+- fix: Ensure panel resizing is correctly constrained by configured panel constraints.
+
 ## 1.1.1
 
 - feat: Add `PanelEntryScope` helper APIs (`ofId` and `maybeOfId`) to simplify reading panel ids from panel context.
