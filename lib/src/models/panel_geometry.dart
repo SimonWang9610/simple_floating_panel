@@ -31,7 +31,11 @@ class PanelGeometry extends Equatable {
     );
   }
 
-  PanelGeometry resize(Offset delta, ResizeDirection direction) {
+  PanelGeometry resize(
+    Offset delta,
+    ResizeDirection direction, {
+    PanelConstraints? constraints,
+  }) {
     double newX = origin.dx;
     double newY = origin.dy;
 
@@ -51,7 +55,23 @@ class PanelGeometry extends Equatable {
       size.height + heightDelta,
     );
 
-    return PanelGeometry(origin: Offset(newX, newY), size: newSize);
+    final constrainedSize = constraints?.constrainSize(newSize) ?? newSize;
+
+    /// If the size is constrained, we need to adjust the origin to ensure that the panel resizes in the expected direction.
+    if (constrainedSize != newSize) {
+      final widthDiff = constrainedSize.width - newSize.width;
+      final heightDiff = constrainedSize.height - newSize.height;
+
+      if (direction.isLeftEdge) {
+        newX -= widthDiff;
+      }
+
+      if (direction.isTopEdge) {
+        newY -= heightDiff;
+      }
+    }
+
+    return PanelGeometry(origin: Offset(newX, newY), size: constrainedSize);
   }
 
   @override

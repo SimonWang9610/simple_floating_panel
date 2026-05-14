@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-import '../models/resize_direction.dart';
-
 /// Controller for individual panel views, allowing manipulation of the panel's state and geometry.
 ///
 /// Unlike [PanelController], which manages the collection of panels,
@@ -160,7 +158,11 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
   @override
   void resize(Offset delta, ResizeDirection direction) {
     _update(
-      geometry: _state.geometry.resize(delta, direction),
+      geometry: _state.geometry.resize(
+        delta,
+        direction,
+        constraints: _constraints,
+      ),
     );
   }
 

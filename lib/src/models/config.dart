@@ -43,6 +43,7 @@ class PanelConfig extends Equatable {
   final PanelPreviewStyle previewStyle;
   final BoxDecoration focusedDecoration;
   final BoxDecoration decoration;
+  final double resizeThreshold;
 
   const PanelConfig({
     this.previewStyle = const PanelPreviewStyle(barrierColor: Colors.black54, barrierDismissible: true),
@@ -54,10 +55,11 @@ class PanelConfig extends Equatable {
       borderRadius: BorderRadius.all(Radius.circular(8)),
       boxShadow: [BoxShadow(color: Colors.purple, blurRadius: 5, offset: Offset(0, 1))],
     ),
+    this.resizeThreshold = 5,
   });
 
   @override
-  List<Object?> get props => [previewStyle, focusedDecoration, decoration];
+  List<Object?> get props => [previewStyle, focusedDecoration, decoration, resizeThreshold];
 
   Widget wrap(Widget panelView, {bool focused = false, bool preview = false}) {
     final d = switch ((preview, focused)) {

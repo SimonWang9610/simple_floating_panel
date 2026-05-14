@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-import '../models/resize_direction.dart';
-
 class PanelEntryView extends StatefulWidget {
   final double resizeThreshold;
   final bool enabled;
@@ -12,7 +10,7 @@ class PanelEntryView extends StatefulWidget {
     super.key,
     this.enabled = true,
     required this.entry,
-    this.resizeThreshold = 10,
+    this.resizeThreshold = 5,
   });
 
   @override
@@ -20,56 +18,6 @@ class PanelEntryView extends StatefulWidget {
 }
 
 class _PanelEntryViewState extends State<PanelEntryView> {
-  final _cursor = ValueNotifier(MouseCursor.defer);
-
-  final Map<ResizeDirection, Rect> _resizeZones = {};
-
-  ResizeDirection? _direction;
-  bool _gestureActive = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    widget.entry.controller.addListener(_determineResizeZones);
-    _determineResizeZones();
-  }
-
-  @override
-  void didUpdateWidget(covariant PanelEntryView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.entry.controller != widget.entry.controller) {
-      oldWidget.entry.controller.removeListener(_determineResizeZones);
-      widget.entry.controller.addListener(_determineResizeZones);
-      _determineResizeZones();
-    }
-  }
-
-  void _determineResizeZones() {
-    if (!widget.entry.useBuiltInView) {
-      _resizeZones.clear();
-      return;
-    }
-
-    final size = widget.entry.controller.value.geometry.size;
-
-    for (final d in ResizeDirection.values) {
-      _resizeZones[d] = d.buildEdgeRect(
-        size,
-        widget.resizeThreshold,
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _cursor.dispose();
-    widget.entry.controller.removeListener(_determineResizeZones);
-    _resizeZones.clear();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget view = PanelMasterScope(
@@ -88,104 +36,32 @@ class _PanelEntryViewState extends State<PanelEntryView> {
     );
 
     if (widget.entry.useBuiltInView) {
-      view = GestureDetector(
-        onTap: widget.entry.controller.bringToFront,
-        onPanDown: (details) {
-          _updateCursor(details.localPosition);
-          _gestureActive = true;
-        },
-        onPanCancel: () {
-          _gestureActive = false;
-          _reset();
-        },
-        onPanEnd: (details) {
-          _gestureActive = false;
-          _reset();
-          _updateCursor(details.localPosition);
-        },
-        onPanStart: (details) {
+      view = PanelGestureDetector(
+        enabled: widget.enabled,
+        resizeThreshold: widget.resizeThreshold,
+        onTap: () {
           widget.entry.controller.bringToFront();
         },
-        onPanUpdate: _onPanUpdate,
-        child: ValueListenableBuilder(
-          valueListenable: _cursor,
-          builder: (_, cursor, child) {
-            return MouseRegion(
-              cursor: cursor,
-              onExit: (event) {
-                if (!_gestureActive) {
-                  _reset();
-                }
-              },
-              onHover: (event) {
-                if (!_gestureActive) {
-                  _updateCursor(event.localPosition);
-                }
-              },
-              child: child,
-            );
-          },
-          child: view,
-        ),
+        onInteractionStart: () {
+          widget.entry.controller.bringToFront();
+        },
+        onMoveUpdate: (delta) {
+          if (widget.entry.controller.value.mode != PanelViewMode.normal) return;
+          widget.entry.controller.move(delta.dx, delta.dy);
+        },
+        onResizeUpdate: (delta, direction) {
+          if (widget.entry.controller.value.mode != PanelViewMode.normal) return;
+          widget.entry.controller.resize(delta, direction);
+        },
+        child: view,
+      );
+    } else {
+      view = IgnorePointer(
+        ignoring: !widget.enabled,
+        child: view,
       );
     }
 
-    return IgnorePointer(
-      ignoring: !widget.enabled,
-      child: view,
-    );
-  }
-
-  void _updateCursor(Offset localPosition) {
-    if (_resizeZones.isEmpty) {
-      _cursor.value = MouseCursor.defer;
-      _direction = null;
-      return;
-    }
-
-    for (final entry in _resizeZones.entries) {
-      if (entry.value.contains(localPosition)) {
-        _cursor.value = entry.key.cursor;
-        _direction = entry.key;
-        return;
-      }
-    }
-
-    _cursor.value = MouseCursor.defer;
-    _direction = null;
-  }
-
-  void _reset() {
-    _cursor.value = MouseCursor.defer;
-    _direction = null;
-  }
-
-  void _onPanUpdate(DragUpdateDetails details) {
-    final delta = details.delta;
-
-    if (_direction == null) {
-      widget.entry.controller.move(delta.dx, delta.dy);
-    } else {
-      widget.entry.controller.resize(delta, _direction!);
-    }
-  }
-}
-
-extension on ResizeDirection {
-  MouseCursor get cursor {
-    switch (this) {
-      case ResizeDirection.up || ResizeDirection.down:
-        return SystemMouseCursors.resizeUpDown;
-      case ResizeDirection.left || ResizeDirection.right:
-        return SystemMouseCursors.resizeLeftRight;
-      case ResizeDirection.topLeft:
-        return SystemMouseCursors.resizeUpLeftDownRight;
-      case ResizeDirection.bottomRight:
-        return SystemMouseCursors.resizeUpLeftDownRight;
-      case ResizeDirection.topRight:
-        return SystemMouseCursors.resizeUpRightDownLeft;
-      case ResizeDirection.bottomLeft:
-        return SystemMouseCursors.resizeDownLeft;
-    }
+    return view;
   }
 }

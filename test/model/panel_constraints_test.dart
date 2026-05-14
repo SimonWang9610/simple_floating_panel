@@ -5,11 +5,7 @@ import 'package:simple_floating_panel/simple_floating_panel.dart';
 void main() {
   group('PanelConstraints', () {
     test('scale computes min/max size and centered origin', () {
-      final constraints = PanelConstraints.scale(
-        const Size(1000, 800),
-        minSizeRatio: 0.25,
-        maxSizeRatio: 0.5,
-      );
+      final constraints = PanelConstraints.scale(const Size(1000, 800), minSizeRatio: 0.25, maxSizeRatio: 0.5);
 
       expect(constraints.minSize, const Size(250, 200));
       expect(constraints.maxSize, const Size(500, 400));
@@ -29,10 +25,7 @@ void main() {
     });
 
     test('constrainSize enforces min and max bounds', () {
-      final constraints = PanelConstraints(
-        minSize: const Size(100, 80),
-        maxSize: const Size(300, 220),
-      );
+      final constraints = PanelConstraints(minSize: const Size(100, 80), maxSize: const Size(300, 220));
 
       expect(constraints.constrainSize(const Size(10, 10)), const Size(100, 80));
       expect(constraints.constrainSize(const Size(500, 500)), const Size(300, 220));
@@ -40,35 +33,42 @@ void main() {
     });
 
     test('constrain keeps geometry unchanged when already within bounds', () {
-      final constraints = PanelConstraints(
-        minSize: Size(100, 80),
-        maxSize: Size(400, 300),
-      );
+      final constraints = PanelConstraints(minSize: Size(100, 80), maxSize: Size(400, 300));
 
-      const geometry = PanelGeometry(
-        origin: Offset(40, 30),
-        size: Size(200, 120),
-      );
+      const geometry = PanelGeometry(origin: Offset(40, 30), size: Size(200, 120));
 
       expect(constraints.constrain(geometry), geometry);
     });
 
     test('constrain repositions geometry to keep edge visibility', () {
+      final constraints = PanelConstraints(minSize: Size(100, 80), maxSize: Size(300, 220), edgeVisibleThreshold: 20);
+
+      const farOutside = PanelGeometry(origin: Offset(1000, 1000), size: Size(80, 60));
+
+      final constrained = constraints.constrain(farOutside);
+
+      expect(constrained.size, const Size(100, 80));
+      expect(constrained.origin, const Offset(280, 200));
+    });
+
+    test('constrain keeps origin stable for geometry already resized with constraints', () {
       final constraints = PanelConstraints(
         minSize: Size(100, 80),
         maxSize: Size(300, 220),
         edgeVisibleThreshold: 20,
       );
 
-      const farOutside = PanelGeometry(
-        origin: Offset(1000, 1000),
-        size: Size(80, 60),
+      const start = PanelGeometry(origin: Offset(50, 40), size: Size(200, 120));
+      final resized = start.resize(
+        const Offset(180, 0),
+        ResizeDirection.left,
+        constraints: constraints,
       );
 
-      final constrained = constraints.constrain(farOutside);
+      final constrained = constraints.constrain(resized);
 
-      expect(constrained.size, const Size(100, 80));
-      expect(constrained.origin, const Offset(280, 200));
+      expect(constrained, resized);
+      expect(constrained.origin.dx + constrained.size.width, 250);
     });
   });
 }
