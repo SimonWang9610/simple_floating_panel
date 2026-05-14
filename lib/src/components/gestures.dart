@@ -64,9 +64,9 @@ final class PanelMoveGestureRecognizer extends PanGestureRecognizer {
   @override
   void addAllowedPointer(PointerDownEvent event) {
     final allowed = moveChecker(event.position);
-    _allowedPointers[event.pointer] = allowed;
 
     if (allowed) {
+      _allowedPointers[event.pointer] = allowed;
       super.addAllowedPointer(event);
     }
   }
