@@ -2,7 +2,7 @@
 
 A lightweight desktop-style floating panel system for Flutter.
 
-Supports multi-panel orchestration with drag/resize, z-order, preview mode, minimize/restore, and master-slave panel relations.
+Supports multi-panel orchestration with handle-based drag/resize, z-order, preview mode, minimize/restore, and master-slave panel relations.
 
 ---
 
@@ -10,7 +10,7 @@ Supports multi-panel orchestration with drag/resize, z-order, preview mode, mini
 
 ```yaml
 dependencies:
-  simple_floating_panel: ^1.0.0
+  simple_floating_panel: ^2.0.0
 ```
 
 ```bash
@@ -21,16 +21,13 @@ flutter pub get
 
 ## Demo
 
-<div style="display: flex; gap: 16px; flex-wrap: wrap;">
-<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/multi-floating-panel-demo.gif?raw=true" alt="Demo" width="600"/>
-
-<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/panel-resize-move-demo.gif?raw=true" alt="Demo" width="600"/>
+<img src="https://github.com/SimonWang9610/simple_floating_panel/blob/main/assets/simple-floating-panel-demo.gif?raw=true" alt="Demo" width="600"/>
 </div>
 
 ## Core features
 
 - Multi-panel orchestration with z-order management
-- Built-in drag and resize panel interactions
+- Dedicated move and resize handles to avoid gesture conflicts inside panel content
 - Window and preview modes (`PanelMode.window`, `PanelMode.preview`)
 - Minimize/restore workflow and optional dock integration
 - Master-slave relations with cascade close behavior
@@ -139,6 +136,65 @@ controller.open(
 );
 ```
 
+### Interaction handles
+
+From `2.0.0` onward, the package no longer installs internal drag and resize recognizers over the entire panel view.
+
+Wrap the exact parts of your panel UI that should move or resize the panel:
+
+- Use `PanelMoveHandle` on the title bar or another explicit drag region.
+- Use `PanelResizeHandle` around the full panel shell to add edge and corner resize affordances.
+- Leave the main body unwrapped so scrollables, buttons, text fields, and custom gestures work without competing with panel gestures.
+
+```dart
+class MyPanelView extends StatelessWidget {
+  final PanelViewController controller;
+
+  const MyPanelView({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final isMaximized = controller.value.mode == PanelViewMode.maximized;
+
+    return PanelResizeHandle(
+      enabled: !isMaximized,
+      child: Material(
+        color: Colors.white,
+        child: Column(
+          children: [
+            PanelMoveHandle(
+              child: Container(
+                color: Colors.blueGrey.shade50,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    const Expanded(child: Text('Main Panel')),
+                    IconButton(onPressed: controller.minimize, icon: const Icon(Icons.minimize)),
+                    IconButton(
+                      onPressed: isMaximized ? controller.restore : controller.maximize,
+                      icon: Icon(isMaximized ? Icons.filter_none : Icons.fullscreen),
+                    ),
+                    IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+                  ],
+                ),
+              ),
+            ),
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Text('Panel content stays free for its own gestures.'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+If you are upgrading from `1.x`, any panel that should remain movable or resizable must now wrap its UI with these handle widgets explicitly.
+
 ### Master-only usage
 
 ```dart
@@ -209,12 +265,11 @@ Panel descriptor used when opening a panel.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `id` | `Object` | Yes | Unique identifier of the panel. |
-| `builder` | `PanelWidgetBuilder` | Yes | Builds panel content with a `PanelViewController`. |
+| `builder` | `PanelWidgetBuilder` | Yes | Builds panel content with a `PanelViewController`; compose `PanelMoveHandle` and `PanelResizeHandle` here when the panel should be movable or resizable. |
 | `title` | `String?` | No | Optional title used by panel UI/dock representation. |
 | `initialSize` | `Size?` | No | Initial panel size before constraints are applied. |
 | `initialPosition` | `Offset?` | No | Initial origin before constraints are applied. |
 | `maintainState` | `bool` | No | Keeps panel widget state when hidden/mode-switched. |
-| `useBuiltInView` | `bool` | No | Enables built-in drag/resize view behavior. |
 | `addRepaintBoundary` | `bool` | No | Wraps panel with `RepaintBoundary` for paint optimization. |
 | `masterId` | `Object?` | No | When set, creates a slave panel attached to the master panel id. |
 
