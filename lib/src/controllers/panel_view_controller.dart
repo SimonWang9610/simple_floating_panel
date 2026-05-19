@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
+import '../models/resize_direction.dart';
+
 /// Controller for individual panel views, allowing manipulation of the panel's state and geometry.
 ///
 /// Unlike [PanelController], which manages the collection of panels,
@@ -62,9 +64,7 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
     required PanelViewState initialState,
     required PanelConstraints initialConstraints,
   }) : _constraints = initialConstraints {
-    _state = initialState.copyWith(
-      geometry: _constraints.constrain(initialState.geometry),
-    );
+    _state = initialState.copyWith(geometry: _constraints.constrain(initialState.geometry));
   }
 
   @override
@@ -110,10 +110,7 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
   void maximize() {
     _restorableGeometry = _state.geometry;
 
-    final updated = _update(
-      mode: PanelViewMode.maximized,
-      geometry: _constraints.maximumGeometry,
-    );
+    final updated = _update(mode: PanelViewMode.maximized, geometry: _constraints.maximumGeometry);
 
     if (updated) {
       delegate.onPanelMaximize(panelId);
@@ -136,10 +133,7 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
 
   @override
   void restore() {
-    final updated = _update(
-      mode: PanelViewMode.normal,
-      geometry: _restorableGeometry,
-    );
+    final updated = _update(mode: PanelViewMode.normal, geometry: _restorableGeometry);
 
     _restorableGeometry = null;
 
@@ -150,9 +144,7 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
 
   @override
   void move(double dx, double dy) {
-    _update(
-      geometry: _state.geometry.move(dx, dy),
-    );
+    _update(geometry: _state.geometry.move(dx, dy));
   }
 
   @override
@@ -172,11 +164,7 @@ final class _ViewControllerImpl extends ChangeNotifier implements PanelViewContr
     super.dispose();
   }
 
-  bool _update({
-    String? title,
-    PanelViewMode? mode,
-    PanelGeometry? geometry,
-  }) {
+  bool _update({String? title, PanelViewMode? mode, PanelGeometry? geometry}) {
     final newState = _state.copyWith(
       title: title,
       mode: mode,

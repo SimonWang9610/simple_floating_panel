@@ -18,10 +18,7 @@ final class PanelShower {
 
   void ensurePanelOnstage(BuildContext context, {Panel? panel}) {
     if (panel != null && panel.maintainState) {
-      _cacheKeys.putIfAbsent(
-        panel.id,
-        () => GlobalKey(debugLabel: '$hashCode@${panel.id}'),
-      );
+      _cacheKeys.putIfAbsent(panel.id, () => GlobalKey(debugLabel: '$hashCode@${panel.id}'));
     }
 
     if (_floating != null && _floating!.value) return;

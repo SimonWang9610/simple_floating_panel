@@ -4,17 +4,9 @@ import 'package:simple_floating_panel/simple_floating_panel.dart';
 
 void main() {
   group('PanelPositioner', () {
-    final panel = Panel(
-      id: 'panel',
-      initialSize: const Size(120, 90),
-      builder: (_, __) => const SizedBox(),
-    );
+    final panel = Panel(id: 'panel', initialSize: const Size(120, 90), builder: (_, __) => const SizedBox());
 
-    final constraints = PanelConstraints(
-      minSize: Size(80, 60),
-      maxSize: Size(800, 600),
-      origin: Offset(30, 40),
-    );
+    final constraints = PanelConstraints(minSize: Size(80, 60), maxSize: Size(800, 600), origin: Offset(30, 40));
 
     test('origin positioner always returns constraints origin', () {
       final positioner = PanelPositioner.alwaysOrigin();

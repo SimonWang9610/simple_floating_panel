@@ -10,11 +10,7 @@ import 'package:simple_floating_panel/simple_floating_panel.dart';
 class PanelScope extends InheritedWidget {
   final PanelController controller;
 
-  const PanelScope({
-    super.key,
-    required this.controller,
-    required super.child,
-  });
+  const PanelScope({super.key, required this.controller, required super.child});
 
   @override
   bool updateShouldNotify(covariant PanelScope oldWidget) {
@@ -68,11 +64,7 @@ class PanelScope extends InheritedWidget {
 class PanelMasterScope extends InheritedWidget {
   final Object masterId;
 
-  const PanelMasterScope({
-    super.key,
-    required this.masterId,
-    required super.child,
-  });
+  const PanelMasterScope({super.key, required this.masterId, required super.child});
 
   @override
   bool updateShouldNotify(covariant PanelMasterScope oldWidget) {

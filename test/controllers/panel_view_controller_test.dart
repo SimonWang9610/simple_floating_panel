@@ -13,21 +13,14 @@ void main() {
 
     setUp(() {
       delegate = _DelegateSpy();
-      constraints = testConstraints(
-        screen: const Size(500, 400),
-        min: const Size(100, 80),
-        max: const Size(300, 220),
-      );
+      constraints = testConstraints(screen: const Size(500, 400), min: const Size(100, 80), max: const Size(300, 220));
 
       controller = PanelViewController(
         'panel-1',
         delegate: delegate,
         initialState: const PanelViewState(
           title: 'Initial',
-          geometry: PanelGeometry(
-            origin: Offset(800, 800),
-            size: Size(30, 30),
-          ),
+          geometry: PanelGeometry(origin: Offset(800, 800), size: Size(30, 30)),
         ),
         initialConstraints: constraints,
       );
@@ -37,10 +30,14 @@ void main() {
       final state = controller.value;
 
       expect(state.geometry.size, const Size(100, 80));
-      expect(state.geometry.origin.dx,
-          constraints.origin.dx + constraints.maxSize.width - constraints.edgeVisibleThreshold);
-      expect(state.geometry.origin.dy,
-          constraints.origin.dy + constraints.maxSize.height - constraints.edgeVisibleThreshold);
+      expect(
+        state.geometry.origin.dx,
+        constraints.origin.dx + constraints.maxSize.width - constraints.edgeVisibleThreshold,
+      );
+      expect(
+        state.geometry.origin.dy,
+        constraints.origin.dy + constraints.maxSize.height - constraints.edgeVisibleThreshold,
+      );
     });
 
     test('setting title updates state and notifies listeners', () {
@@ -102,6 +99,44 @@ void main() {
 
       expect(resized.size, const Size(300, 220));
       expect(resized.origin, const Offset(-80, -60));
+    });
+
+    test('resizing from left with min-width clamp preserves right edge anchor', () {
+      controller = PanelViewController(
+        'panel-1',
+        delegate: delegate,
+        initialState: const PanelViewState(
+          title: 'Initial',
+          geometry: PanelGeometry(origin: Offset(50, 40), size: Size(200, 120)),
+        ),
+        initialConstraints: constraints,
+      );
+
+      controller.resize(const Offset(180, 0), ResizeDirection.left);
+      final resized = controller.value.geometry;
+
+      expect(resized.size, const Size(100, 120));
+      expect(resized.origin.dx, 150);
+      expect(resized.origin.dy, 40);
+    });
+
+    test('resizing from top with min-height clamp preserves bottom edge anchor', () {
+      controller = PanelViewController(
+        'panel-1',
+        delegate: delegate,
+        initialState: const PanelViewState(
+          title: 'Initial',
+          geometry: PanelGeometry(origin: Offset(60, 50), size: Size(180, 140)),
+        ),
+        initialConstraints: constraints,
+      );
+
+      controller.resize(const Offset(0, 120), ResizeDirection.up);
+      final resized = controller.value.geometry;
+
+      expect(resized.size, const Size(180, 80));
+      expect(resized.origin.dx, 60);
+      expect(resized.origin.dy, 110);
     });
 
     test('updating constraints to same value is a no-op, new value re-constrains state', () {

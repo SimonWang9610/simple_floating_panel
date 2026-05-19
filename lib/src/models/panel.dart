@@ -18,11 +18,6 @@ sealed class Panel {
   /// Defaults to true;
   final bool addRepaintBoundary;
 
-  /// Whether to use the built-in panel view [PanelEntryView], which handles dragging and resizing.
-  ///
-  /// If false, it is the developer's responsibility to provide their own implementation for dragging and resizing the panel.
-  final bool useBuiltInView;
-
   /// Optional title for the panel, which can be used to build the panel item in the dock when the panel is minimized.
   final String? title;
 
@@ -46,11 +41,7 @@ sealed class Panel {
   /// If not provided, [PanelSizer] will attempt to find the initial size.
   final Size? initialSize;
 
-  /// The builder function for the panel's content.
-  ///
-  /// If [useBuiltInView] is true, the builder will be wrapped in a [PanelEntryView],
-  /// which provides built-in dragging and resizing functionality.
-  ///
+  /// The builder function for the panel's content.  ///
   /// All widgets built by this builder will be provided with a [PanelViewController]
   /// that can be used to control the panel's state and geometry.
   ///
@@ -65,7 +56,6 @@ sealed class Panel {
     this.initialSize,
     this.maintainState = true,
     this.addRepaintBoundary = true,
-    this.useBuiltInView = true,
   });
 
   /// Creates a new panel with the given parameters.
@@ -80,7 +70,6 @@ sealed class Panel {
     Size? initialSize,
     bool maintainState = true,
     bool addRepaintBoundary = true,
-    bool useBuiltInView = true,
     Object? masterId,
   }) {
     if (masterId != null) {
@@ -92,7 +81,6 @@ sealed class Panel {
         initialSize: initialSize,
         maintainState: maintainState,
         addRepaintBoundary: addRepaintBoundary,
-        useBuiltInView: useBuiltInView,
         masterId: masterId,
       );
     } else {
@@ -104,7 +92,6 @@ sealed class Panel {
         initialSize: initialSize,
         maintainState: maintainState,
         addRepaintBoundary: addRepaintBoundary,
-        useBuiltInView: useBuiltInView,
       );
     }
   }
@@ -130,7 +117,6 @@ final class SlavePanel extends Panel {
     super.initialSize,
     super.maintainState,
     super.addRepaintBoundary,
-    super.useBuiltInView,
   }) : super._();
 }
 
@@ -145,6 +131,5 @@ final class MasterPanel extends Panel {
     super.initialSize,
     super.maintainState,
     super.addRepaintBoundary,
-    super.useBuiltInView,
   }) : super._();
 }

@@ -11,10 +11,7 @@ abstract interface class PanelPositioner {
   /// A positioner that cascades panels diagonally with a specified offset, starting from the origin.
   /// If a candidate position overlaps with any existing panel (with a specified [margin]),
   /// the positioner will keep adding [offset] until it finds a non-overlapping position.
-  const factory PanelPositioner.cascade({
-    Offset offset,
-    double margin,
-  }) = _OriginCascadePanelPositioner;
+  const factory PanelPositioner.cascade({Offset offset, double margin}) = _OriginCascadePanelPositioner;
 
   /// A positioner that positions the panel based on the specified alignments and offset.
   /// The [panelAlignment] specifies the point on the panel to align,
@@ -22,11 +19,16 @@ abstract interface class PanelPositioner {
   ///
   /// [offset] can be used to further adjust the position after alignment.
   ///
+  /// [step] and [margin] are used to find an alternative position
+  /// if the ideal position overlaps with existing panels.
+  ///
   /// The position calculation behaves similarly to [CompositedTransformFollower].
   const factory PanelPositioner.follow({
     Offset offset,
     Alignment panelAlignment,
     Alignment screenAlignment,
+    double step,
+    double margin,
   }) = _FollowPanelPositioner;
 }
 
@@ -43,10 +45,7 @@ final class _OriginCascadePanelPositioner implements PanelPositioner {
   final double margin;
   final Offset offset;
 
-  const _OriginCascadePanelPositioner({
-    this.offset = const Offset(20, 20),
-    this.margin = 20,
-  });
+  const _OriginCascadePanelPositioner({this.offset = const Offset(20, 20), this.margin = 20});
 
   @override
   Offset find(Iterable<PanelGeometry> others, PanelConstraints constraints, Size panelSize) {
@@ -74,11 +73,15 @@ final class _FollowPanelPositioner implements PanelPositioner {
   final Offset offset;
   final Alignment panelAlignment;
   final Alignment screenAlignment;
+  final double step;
+  final double margin;
 
   const _FollowPanelPositioner({
     this.offset = Offset.zero,
     this.panelAlignment = Alignment.topLeft,
     this.screenAlignment = Alignment.topLeft,
+    this.margin = 20,
+    this.step = 20,
   });
 
   @override
@@ -86,7 +89,24 @@ final class _FollowPanelPositioner implements PanelPositioner {
     final panelAnchor = panelAlignment.alongSize(panelSize);
     final screenAnchor = screenAlignment.alongSize(constraints.maxSize);
 
-    return screenAnchor - panelAnchor + offset;
+    Offset candidate = screenAnchor - panelAnchor + offset;
+
+    // find the first non-overlapping position by checking against existing panels in order of proximity to the ideal position
+    final ordered = others.toList()
+      ..sort((a, b) => (a.origin - candidate).distance.compareTo((b.origin - candidate).distance));
+
+    final alignedStep = -Offset(panelAlignment.x * step, panelAlignment.y * step);
+
+    for (final geometry in ordered) {
+      final rect = geometry.rect.inflate(margin);
+
+      if (rect.contains(candidate)) {
+        candidate += alignedStep;
+      } else {
+        break;
+      }
+    }
+    return candidate;
   }
 }
 

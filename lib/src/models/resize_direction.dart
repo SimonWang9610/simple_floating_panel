@@ -6,7 +6,8 @@ enum ResizeDirection {
   topLeft,
   topRight,
   bottomLeft,
-  bottomRight;
+  bottomRight
+  ;
 
   bool get isLeftEdge =>
       this == ResizeDirection.left || this == ResizeDirection.topLeft || this == ResizeDirection.bottomLeft;

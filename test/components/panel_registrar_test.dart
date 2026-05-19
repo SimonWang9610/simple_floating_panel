@@ -38,11 +38,7 @@ void main() {
     });
 
     test('registering slave without existing master throws StateError', () {
-      final slave = Panel(
-        id: 'slave-orphan',
-        masterId: 'missing-master',
-        builder: (_, __) => const SizedBox(),
-      );
+      final slave = Panel(id: 'slave-orphan', masterId: 'missing-master', builder: (_, __) => const SizedBox());
 
       expect(
         () => registrar.register(slave, viewControllerCreator: (p) => _controllerFor(p.id, delegate)),

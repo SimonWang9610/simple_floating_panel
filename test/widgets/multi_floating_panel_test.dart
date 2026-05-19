@@ -9,10 +9,7 @@ void main() {
     testWidgets('window mode hides minimized panels and preview mode shows them', (tester) async {
       final context = await pumpPanelAppAndGetContext(tester, size: const Size(900, 700));
       final controller = PanelController(
-        initialConstraints: testConstraints(
-          screen: const Size(900, 700),
-          min: const Size(120, 90),
-        ),
+        initialConstraints: testConstraints(screen: const Size(900, 700), min: const Size(120, 90)),
       );
 
       controller.open(context, buildPanel(id: 'a', text: 'Panel A'));
@@ -39,10 +36,7 @@ void main() {
     testWidgets('tapping panel in preview mode focuses it and switches back to window mode', (tester) async {
       final context = await pumpPanelAppAndGetContext(tester, size: const Size(900, 700));
       final controller = PanelController(
-        initialConstraints: testConstraints(
-          screen: const Size(900, 700),
-          min: const Size(120, 90),
-        ),
+        initialConstraints: testConstraints(screen: const Size(900, 700), min: const Size(120, 90)),
       );
 
       controller.open(context, buildPanel(id: 'a', text: 'Panel A', initialPosition: const Offset(40, 40)));
@@ -78,10 +72,7 @@ void main() {
           origin: const Offset(100, 80),
         ),
         initialConfig: const PanelConfig(
-          previewStyle: PanelPreviewStyle(
-            barrierDismissible: true,
-            barrierColor: Colors.black26,
-          ),
+          previewStyle: PanelPreviewStyle(barrierDismissible: true, barrierColor: Colors.black26),
         ),
       );
 
@@ -107,10 +98,7 @@ void main() {
           origin: const Offset(100, 80),
         ),
         initialConfig: const PanelConfig(
-          previewStyle: PanelPreviewStyle(
-            barrierDismissible: false,
-            barrierColor: Colors.black26,
-          ),
+          previewStyle: PanelPreviewStyle(barrierDismissible: false, barrierColor: Colors.black26),
         ),
       );
 
@@ -126,14 +114,12 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('uses different PanelConfig decorations for focused and unfocused panels in window mode',
-        (tester) async {
+    testWidgets('uses different PanelConfig decorations for focused and unfocused panels in window mode', (
+      tester,
+    ) async {
       final context = await pumpPanelAppAndGetContext(tester, size: const Size(900, 700));
       final controller = PanelController(
-        initialConstraints: testConstraints(
-          screen: const Size(900, 700),
-          min: const Size(120, 90),
-        ),
+        initialConstraints: testConstraints(screen: const Size(900, 700), min: const Size(120, 90)),
         initialConfig: const PanelConfig(
           decoration: BoxDecoration(color: Colors.amber),
           focusedDecoration: BoxDecoration(color: Colors.teal),
@@ -156,10 +142,7 @@ void main() {
     testWidgets('applies updated PanelConfig when controller config changes', (tester) async {
       final context = await pumpPanelAppAndGetContext(tester, size: const Size(900, 700));
       final controller = PanelController(
-        initialConstraints: testConstraints(
-          screen: const Size(900, 700),
-          min: const Size(120, 90),
-        ),
+        initialConstraints: testConstraints(screen: const Size(900, 700), min: const Size(120, 90)),
         initialConfig: const PanelConfig(
           decoration: BoxDecoration(color: Colors.orange),
           focusedDecoration: BoxDecoration(color: Colors.pink),
@@ -185,10 +168,7 @@ void main() {
     testWidgets('uses preview-specific decorations from PanelConfig in preview mode', (tester) async {
       final context = await pumpPanelAppAndGetContext(tester, size: const Size(900, 700));
       final controller = PanelController(
-        initialConstraints: testConstraints(
-          screen: const Size(900, 700),
-          min: const Size(120, 90),
-        ),
+        initialConstraints: testConstraints(screen: const Size(900, 700), min: const Size(120, 90)),
         initialConfig: const PanelConfig(
           decoration: BoxDecoration(color: Colors.amber),
           focusedDecoration: BoxDecoration(color: Colors.teal),
@@ -218,10 +198,7 @@ void main() {
 }
 
 BoxDecoration _panelContainerForText(WidgetTester tester, String text) {
-  final decoratedBoxFinder = find.ancestor(
-    of: find.text(text).first,
-    matching: find.byType(DecoratedBox),
-  );
+  final decoratedBoxFinder = find.ancestor(of: find.text(text).first, matching: find.byType(DecoratedBox));
 
   expect(decoratedBoxFinder, findsWidgets);
 
