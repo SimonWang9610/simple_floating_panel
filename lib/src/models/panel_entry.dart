@@ -5,7 +5,6 @@ typedef PanelWidgetBuilder = Widget Function(BuildContext context, PanelViewCont
 
 sealed class PanelEntry {
   final Object id;
-  final bool useBuiltInView;
   final bool addRepaintBoundary;
   final PanelWidgetBuilder builder;
   final PanelViewController controller;
@@ -14,7 +13,6 @@ sealed class PanelEntry {
     required this.id,
     required this.builder,
     required this.controller,
-    required this.useBuiltInView,
     required this.addRepaintBoundary,
   });
 
@@ -22,7 +20,6 @@ sealed class PanelEntry {
     required Object id,
     required PanelWidgetBuilder builder,
     required PanelViewController controller,
-    bool useBuiltInView = true,
     bool addRepaintBoundary = true,
     Object? masterId,
   }) {
@@ -31,7 +28,6 @@ sealed class PanelEntry {
         id: id,
         builder: builder,
         controller: controller,
-        useBuiltInView: useBuiltInView,
         addRepaintBoundary: addRepaintBoundary,
         masterId: masterId,
       );
@@ -40,7 +36,6 @@ sealed class PanelEntry {
         id: id,
         builder: builder,
         controller: controller,
-        useBuiltInView: useBuiltInView,
         addRepaintBoundary: addRepaintBoundary,
       );
     }
@@ -54,7 +49,6 @@ final class SlavePanelEntry extends PanelEntry {
     required super.id,
     required super.builder,
     required super.controller,
-    required super.useBuiltInView,
     required super.addRepaintBoundary,
     required this.masterId,
   }) : super._();
@@ -67,7 +61,6 @@ final class MasterPanelEntry extends PanelEntry {
     required super.id,
     required super.builder,
     required super.controller,
-    required super.useBuiltInView,
     required super.addRepaintBoundary,
     this.slaves = const [],
   }) : super._();
@@ -81,7 +74,6 @@ final class MasterPanelEntry extends PanelEntry {
       id: id,
       builder: builder,
       controller: controller,
-      useBuiltInView: useBuiltInView,
       addRepaintBoundary: addRepaintBoundary,
       slaves: [...slaves, attachedPanelId],
     );
@@ -96,7 +88,6 @@ final class MasterPanelEntry extends PanelEntry {
       id: id,
       builder: builder,
       controller: controller,
-      useBuiltInView: useBuiltInView,
       addRepaintBoundary: addRepaintBoundary,
       slaves: slaves.where((id) => id != attachedPanelId).toList(),
     );

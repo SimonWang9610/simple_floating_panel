@@ -95,9 +95,9 @@ class PanelConstraints extends Equatable {
     required this.maxSize,
     this.origin = Offset.zero,
     this.edgeVisibleThreshold = 20,
-  })  : assert(maxSize > minSize, 'maxSize must be greater than or equal to minSize'),
-        assert(edgeVisibleThreshold >= 0, 'edgeVisibleThreshold must be non-negative'),
-        assert(origin >= Offset.zero, 'origin must be non-negative');
+  }) : assert(maxSize > minSize, 'maxSize must be greater than or equal to minSize'),
+       assert(edgeVisibleThreshold >= 0, 'edgeVisibleThreshold must be non-negative'),
+       assert(origin >= Offset.zero, 'origin must be non-negative');
 
   factory PanelConstraints.scale(
     Size screenSize, {
@@ -181,7 +181,7 @@ class PanelConstraints extends Equatable {
     final constrainedRect = constrainedGeometry.rect;
     final screenRect = rect;
 
-    final intersected = constrainedRect.intersect(screenRect.deflate(edgeVisibleThreshold));
+    final intersected = screenRect.deflate(edgeVisibleThreshold).intersect(constrainedRect);
 
     if (!intersected.isEmpty) {
       return constrainedGeometry;

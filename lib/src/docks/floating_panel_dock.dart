@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-typedef PanelDockWidgetBuilder = Widget Function(
-  BuildContext context,
-  PanelViewController controller,
-  bool isFocused,
-);
+typedef PanelDockWidgetBuilder = Widget Function(BuildContext context, PanelViewController controller, bool isFocused);
 
 Widget _defaultPanelBuilder(BuildContext context, PanelViewController controller, bool isFocused) {
   return _DefaultDockItem(controller: controller, isFocused: isFocused);
@@ -15,11 +11,7 @@ class FloatingPanelDock extends StatelessWidget {
   final PanelController controller;
   final PanelDockWidgetBuilder builder;
 
-  const FloatingPanelDock({
-    super.key,
-    required this.controller,
-    this.builder = _defaultPanelBuilder,
-  });
+  const FloatingPanelDock({super.key, required this.controller, this.builder = _defaultPanelBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +25,7 @@ class FloatingPanelDock extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final entry in controller.panels)
-                builder(
-                  context,
-                  entry.controller,
-                  entry.id == controller.focusedPanel,
-                ),
+                builder(context, entry.controller, entry.id == controller.focusedPanel),
             ],
           ),
         );
@@ -49,10 +37,7 @@ class FloatingPanelDock extends StatelessWidget {
 class _DefaultDockItem extends StatelessWidget {
   final bool isFocused;
   final PanelViewController controller;
-  const _DefaultDockItem({
-    required this.controller,
-    this.isFocused = false,
-  });
+  const _DefaultDockItem({required this.controller, this.isFocused = false});
 
   @override
   Widget build(BuildContext context) {
@@ -88,25 +73,16 @@ class _DefaultDockItem extends StatelessWidget {
                     onTap: () {
                       controller.close();
                     },
-                    child: Icon(
-                      Icons.close,
-                      size: 16,
-                    ),
+                    child: Icon(Icons.close, size: 16),
                   ),
                   Expanded(
                     child: Text(
                       settings.title ?? "Untitled Panel",
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  Icon(
-                    settings.mode == PanelViewMode.minimized ? Icons.open_in_full : Icons.minimize,
-                    size: 16,
-                  ),
+                  Icon(settings.mode == PanelViewMode.minimized ? Icons.open_in_full : Icons.minimize, size: 16),
                 ],
               ),
             ),

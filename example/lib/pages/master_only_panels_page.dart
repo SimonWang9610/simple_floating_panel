@@ -78,20 +78,51 @@ class _MasterOnlyPanelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+    final id = PanelEntryScope.of(context).id;
+
+    final isMaximized = controller.value.mode == PanelViewMode.maximized;
+
+    return PanelResizeHandle(
+      child: Material(
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Master: $label', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            const Text('This panel is independent from all other panels.'),
-            const Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+            PanelMoveHandle(
+              child: Container(
+                color: Colors.blueGrey.shade50,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(child: Text('Master: $label', style: Theme.of(context).textTheme.titleMedium)),
+                    IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text('Panel ID: $id'),
+                    const Text('This panel is independent from all other panels.'),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (isMaximized) {
+                          controller.restore();
+                        } else {
+                          controller.maximize();
+                        }
+                      },
+                      child: Text(isMaximized ? 'Maximized (no resize)' : 'Normal (resizable)'),
+                    ),
+                    for (int i = 0; i < 14; i++) const Text('line'),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

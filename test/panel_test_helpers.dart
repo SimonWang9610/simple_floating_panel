@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
 
-Future<BuildContext> pumpPanelAppAndGetContext(
-  WidgetTester tester, {
-  Size size = const Size(800, 600),
-}) async {
+Future<BuildContext> pumpPanelAppAndGetContext(WidgetTester tester, {Size size = const Size(800, 600)}) async {
   late BuildContext context;
 
   await tester.pumpWidget(
@@ -40,8 +37,16 @@ Panel buildPanel({
     initialSize: size,
     initialPosition: initialPosition,
     maintainState: maintainState,
-    useBuiltInView: useBuiltInView,
-    builder: (_, __) => Text(text),
+    builder: (_, __) {
+      if (useBuiltInView) {
+        return PanelResizeHandle(child: Center(child: Text(text)));
+      }
+
+      return Material(
+        color: Colors.white,
+        child: Center(child: Text(text)),
+      );
+    },
   );
 }
 

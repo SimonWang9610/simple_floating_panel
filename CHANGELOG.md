@@ -1,3 +1,14 @@
+## 2.0.0
+
+- breaking: Replace internal move/resize gesture recognizers with dedicated handle widgets to avoid gesture conflicts with panel body content.
+- feat: Export `PanelMoveHandle`, `PanelResizeHandle`, and `PanelResizeEdgeHandle` so applications can compose explicit drag and resize affordances.
+- docs: Update README usage examples to show wrapping panel chrome with dedicated move/resize handles.
+
+## 1.1.2
+
+- refactor: Rework panel entry view gesture handling for move and resize interactions.
+- fix: Ensure panel resizing is correctly constrained by configured panel constraints.
+
 ## 1.1.1
 
 - feat: Add `PanelEntryScope` helper APIs (`ofId` and `maybeOfId`) to simplify reading panel ids from panel context.

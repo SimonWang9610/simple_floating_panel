@@ -8,10 +8,7 @@ import 'panel_entry_view.dart';
 
 class MultiFloatingPanel extends StatelessWidget {
   final PanelController controller;
-  const MultiFloatingPanel({
-    super.key,
-    required this.controller,
-  });
+  const MultiFloatingPanel({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +41,7 @@ class MultiFloatingPanel extends StatelessWidget {
 
           return PanelTheme(
             config: controller.config,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: panel,
-            ),
+            child: AnimatedSwitcher(duration: const Duration(milliseconds: 300), child: panel),
           );
         },
       ),
@@ -64,11 +58,8 @@ class _PanelStack extends StatelessWidget {
   /// Panels to show in this window, in z-order (from back to front).
   final Iterable<PanelEntry> panels;
 
-  _PanelStack({
-    required this.controller,
-    required this.panels,
-    this.focusedPanelId,
-  }) : assert(
+  _PanelStack({required this.controller, required this.panels, this.focusedPanelId})
+      : assert(
           focusedPanelId == null || panels.isEmpty || panels.last.id == focusedPanelId,
           'Focused panel must be the topmost panel in the window.',
         );
@@ -98,14 +89,13 @@ class _PanelStack extends StatelessWidget {
               child: config.wrap(
                 PanelEntryView(
                   key: PanelCacheKeyStore.getCacheKeyForPanel(context, entry.id),
-                  resizeThreshold: config.resizeThreshold,
                   entry: entry,
                 ),
                 focused: focusedPanelId == entry.id,
                 preview: false,
               ),
             ),
-          )
+          ),
       ],
     );
   }
@@ -117,12 +107,8 @@ class _PanelGrid extends StatefulWidget {
   final Iterable<PanelEntry> panels;
   final PanelConstraints panelConstraints;
 
-  _PanelGrid({
-    this.focusedPanelId,
-    this.switchToWindowMode,
-    required this.panels,
-    required this.panelConstraints,
-  }) : assert(
+  _PanelGrid({this.focusedPanelId, this.switchToWindowMode, required this.panels, required this.panelConstraints})
+      : assert(
           focusedPanelId == null || panels.isEmpty || panels.any((entry) => entry.id == focusedPanelId),
           'Focused panel must be the topmost panel in the grid.',
         );
@@ -206,7 +192,6 @@ class _PanelGridState extends State<_PanelGrid> {
                                 child: PanelEntryView(
                                   key: PanelCacheKeyStore.getCacheKeyForPanel(context, entry.id),
                                   enabled: false,
-                                  resizeThreshold: config.resizeThreshold,
                                   entry: entry,
                                 ),
                               ),

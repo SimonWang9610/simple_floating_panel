@@ -13,11 +13,7 @@ void main() {
       expect(
         () => controller.open(
           context,
-          Panel(
-            id: 'orphan-slave',
-            masterId: 'missing-master',
-            builder: (_, __) => const Text('Orphan'),
-          ),
+          Panel(id: 'orphan-slave', masterId: 'missing-master', builder: (_, __) => const Text('Orphan')),
         ),
         throwsA(isA<StateError>()),
       );
@@ -30,23 +26,12 @@ void main() {
       final controller = PanelController(initialConstraints: testConstraints());
 
       controller.open(context, buildPanel(id: 'master', text: 'Master'));
-      controller.open(
-        context,
-        Panel(
-          id: 'slave-1',
-          masterId: 'master',
-          builder: (_, __) => const Text('Slave 1'),
-        ),
-      );
+      controller.open(context, Panel(id: 'slave-1', masterId: 'master', builder: (_, __) => const Text('Slave 1')));
 
       expect(
         () => controller.open(
           context,
-          Panel(
-            id: 'slave-2',
-            masterId: 'slave-1',
-            builder: (_, __) => const Text('Slave 2'),
-          ),
+          Panel(id: 'slave-2', masterId: 'slave-1', builder: (_, __) => const Text('Slave 2')),
         ),
         throwsA(isA<StateError>()),
       );

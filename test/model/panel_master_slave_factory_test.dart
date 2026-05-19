@@ -7,21 +7,14 @@ import '../panel_test_helpers.dart';
 void main() {
   group('Panel factory master/slave behavior', () {
     test('Panel() creates MasterPanel when masterId is not provided', () {
-      final panel = Panel(
-        id: 'm1',
-        builder: (_, __) => const SizedBox(),
-      );
+      final panel = Panel(id: 'm1', builder: (_, __) => const SizedBox());
 
       expect(panel, isA<MasterPanel>());
       expect(panel, isNot(isA<SlavePanel>()));
     });
 
     test('Panel() creates SlavePanel when masterId is provided', () {
-      final panel = Panel(
-        id: 's1',
-        masterId: 'm1',
-        builder: (_, __) => const SizedBox(),
-      );
+      final panel = Panel(id: 's1', masterId: 'm1', builder: (_, __) => const SizedBox());
 
       expect(panel, isA<SlavePanel>());
       expect((panel as SlavePanel).masterId, 'm1');
@@ -38,21 +31,14 @@ void main() {
         'panel',
         delegate: delegate,
         initialState: const PanelViewState(
-          geometry: PanelGeometry(
-            origin: Offset.zero,
-            size: Size(120, 80),
-          ),
+          geometry: PanelGeometry(origin: Offset.zero, size: Size(120, 80)),
         ),
         initialConstraints: testConstraints(),
       );
     });
 
     test('PanelEntry() creates MasterPanelEntry when masterId is null', () {
-      final entry = PanelEntry(
-        id: 'm1',
-        builder: (_, __) => const SizedBox(),
-        controller: viewController,
-      );
+      final entry = PanelEntry(id: 'm1', builder: (_, __) => const SizedBox(), controller: viewController);
 
       expect(entry, isA<MasterPanelEntry>());
       expect((entry as MasterPanelEntry).slaves, isEmpty);
@@ -71,11 +57,8 @@ void main() {
     });
 
     test('MasterPanelEntry.attach is immutable and idempotent', () {
-      final master = PanelEntry(
-        id: 'm1',
-        builder: (_, __) => const SizedBox(),
-        controller: viewController,
-      ) as MasterPanelEntry;
+      final master =
+          PanelEntry(id: 'm1', builder: (_, __) => const SizedBox(), controller: viewController) as MasterPanelEntry;
 
       final withOne = master.attach('s1');
       final attachingDuplicate = withOne.attach('s1');
@@ -86,13 +69,10 @@ void main() {
     });
 
     test('MasterPanelEntry.detach is immutable and idempotent', () {
-      final master = (PanelEntry(
-        id: 'm1',
-        builder: (_, __) => const SizedBox(),
-        controller: viewController,
-      ) as MasterPanelEntry)
-          .attach('s1')
-          .attach('s2');
+      final master =
+          (PanelEntry(id: 'm1', builder: (_, __) => const SizedBox(), controller: viewController) as MasterPanelEntry)
+              .attach('s1')
+              .attach('s2');
 
       final detached = master.detach('s1');
       final detachingUnknown = detached.detach('missing');

@@ -34,26 +34,14 @@ void main() {
 
     test('supports custom decoration variants', () {
       const style = PanelPreviewStyle(
-        decoration: BoxDecoration(
-          color: Colors.orange,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        focusedDecoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.all(Radius.circular(14)),
-        ),
+        decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.all(Radius.circular(10))),
+        focusedDecoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.all(Radius.circular(14))),
       );
 
       expect((style.decoration as BoxDecoration).color, Colors.orange);
       expect((style.focusedDecoration as BoxDecoration).color, Colors.blue);
-      expect(
-        (style.decoration as BoxDecoration).borderRadius,
-        const BorderRadius.all(Radius.circular(10)),
-      );
-      expect(
-        (style.focusedDecoration as BoxDecoration).borderRadius,
-        const BorderRadius.all(Radius.circular(14)),
-      );
+      expect((style.decoration as BoxDecoration).borderRadius, const BorderRadius.all(Radius.circular(10)));
+      expect((style.focusedDecoration as BoxDecoration).borderRadius, const BorderRadius.all(Radius.circular(14)));
     });
 
     test('equatable compares spacing and barrier-related fields', () {

@@ -70,7 +70,6 @@ final class PanelRegistrar {
       id: panel.id,
       builder: panel.builder,
       controller: viewControllerCreator(panel),
-      useBuiltInView: panel.useBuiltInView,
       addRepaintBoundary: panel.addRepaintBoundary,
     );
 
@@ -110,7 +109,6 @@ final class PanelRegistrar {
       id: panel.id,
       builder: panel.builder,
       controller: viewControllerCreator(panel),
-      useBuiltInView: panel.useBuiltInView,
       addRepaintBoundary: panel.addRepaintBoundary,
       masterId: panel.masterId,
     );
@@ -124,8 +122,10 @@ final class PanelRegistrar {
   List<Object> _unregisterSlavePanel(SlavePanelEntry attached) {
     final masterEntry = _panels[attached.masterId];
 
-    assert(masterEntry is MasterPanelEntry,
-        'Master panel with id ${attached.masterId} not found for attached panel ${attached.id}');
+    assert(
+      masterEntry is MasterPanelEntry,
+      'Master panel with id ${attached.masterId} not found for attached panel ${attached.id}',
+    );
 
     if (masterEntry is MasterPanelEntry) {
       _panels[attached.masterId] = masterEntry.detach(attached.id);

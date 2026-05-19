@@ -11,14 +11,7 @@ void main() {
       final controller = PanelController(initialConstraints: testConstraints());
 
       controller.open(context, buildPanel(id: 'master-1', text: 'Master 1'));
-      controller.open(
-        context,
-        Panel(
-          id: 'slave-1',
-          masterId: 'master-1',
-          builder: (_, __) => const Text('Slave 1'),
-        ),
-      );
+      controller.open(context, Panel(id: 'slave-1', masterId: 'master-1', builder: (_, __) => const Text('Slave 1')));
       await tester.pumpAndSettle();
 
       final master = controller.panels.firstWhere((entry) => entry.id == 'master-1') as MasterPanelEntry;
@@ -37,14 +30,7 @@ void main() {
       final controller = PanelController(initialConstraints: testConstraints());
 
       controller.open(context, buildPanel(id: 'master-1', text: 'Master 1'));
-      controller.open(
-        context,
-        Panel(
-          id: 'slave-1',
-          masterId: 'master-1',
-          builder: (_, __) => const Text('Slave 1'),
-        ),
-      );
+      controller.open(context, Panel(id: 'slave-1', masterId: 'master-1', builder: (_, __) => const Text('Slave 1')));
       await tester.pumpAndSettle();
 
       controller.close('slave-1');
@@ -64,22 +50,8 @@ void main() {
       final controller = PanelController(initialConstraints: testConstraints());
 
       controller.open(context, buildPanel(id: 'master-1', text: 'Master 1'));
-      controller.open(
-        context,
-        Panel(
-          id: 'slave-1',
-          masterId: 'master-1',
-          builder: (_, __) => const Text('Slave 1'),
-        ),
-      );
-      controller.open(
-        context,
-        Panel(
-          id: 'slave-2',
-          masterId: 'master-1',
-          builder: (_, __) => const Text('Slave 2'),
-        ),
-      );
+      controller.open(context, Panel(id: 'slave-1', masterId: 'master-1', builder: (_, __) => const Text('Slave 1')));
+      controller.open(context, Panel(id: 'slave-2', masterId: 'master-1', builder: (_, __) => const Text('Slave 2')));
       await tester.pumpAndSettle();
 
       controller.close('master-1');

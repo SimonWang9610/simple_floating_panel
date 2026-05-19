@@ -12,9 +12,8 @@ abstract interface class PanelSizer {
 final class _ScalePanelSizer implements PanelSizer {
   final double scale;
 
-  const _ScalePanelSizer({
-    this.scale = 0.8,
-  }) : assert(scale > 0 && scale <= 1, 'Scale must be between 0 (exclusive) and 1 (inclusive)');
+  const _ScalePanelSizer({this.scale = 0.8})
+      : assert(scale > 0 && scale <= 1, 'Scale must be between 0 (exclusive) and 1 (inclusive)');
 
   @override
   Size constrain(PanelConstraints constraints) {
@@ -28,10 +27,8 @@ final class _AspectRatioSizer implements PanelSizer {
   final double aspectRatio;
   final double scale;
 
-  const _AspectRatioSizer({
-    this.aspectRatio = 16 / 9,
-    this.scale = 1.0,
-  })  : assert(aspectRatio > 0, 'Aspect ratio must be greater than 0'),
+  const _AspectRatioSizer({this.aspectRatio = 16 / 9, this.scale = 1.0})
+      : assert(aspectRatio > 0, 'Aspect ratio must be greater than 0'),
         assert(scale > 0 && scale <= 1, 'Scale must be between 0 (exclusive) and 1 (inclusive)');
 
   @override
@@ -48,9 +45,7 @@ final class _AspectRatioSizer implements PanelSizer {
 final class _FixedSizeSizer implements PanelSizer {
   final Size size;
 
-  const _FixedSizeSizer({
-    required this.size,
-  });
+  const _FixedSizeSizer({required this.size});
 
   @override
   Size constrain(PanelConstraints constraints) {

@@ -149,36 +149,44 @@ class _MasterPanelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Master: $id', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () {
-                final slaveId = 'slave-from-$id-${DateTime.now().microsecondsSinceEpoch}';
-                PanelMasterScope.open(context, (masterId) {
-                  return Panel(
-                    id: slaveId,
-                    masterId: masterId,
-                    title: slaveId,
-                    initialSize: const Size(280, 170),
-                    builder: (_, c) => _SlavePanelCard(controller: c, id: slaveId, masterId: masterId.toString()),
-                  );
-                });
-              },
-              child: const Text('Open slave from panel via PanelMasterScope.open'),
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
-            ),
-          ],
+    return PanelResizeHandle(
+      child: Material(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PanelMoveHandle(
+                child: Container(
+                  color: Colors.blueGrey.shade50,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text('Master: $id', style: Theme.of(context).textTheme.titleMedium)),
+                      IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+                    ],
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final slaveId = 'slave-from-$id-${DateTime.now().microsecondsSinceEpoch}';
+                  PanelMasterScope.open(context, (masterId) {
+                    return Panel(
+                      id: slaveId,
+                      masterId: masterId,
+                      title: slaveId,
+                      initialSize: const Size(280, 170),
+                      builder: (_, c) => _SlavePanelCard(controller: c, id: slaveId, masterId: masterId.toString()),
+                    );
+                  });
+                },
+                child: const Text('Open slave from panel via PanelMasterScope.open'),
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
@@ -194,22 +202,35 @@ class _SlavePanelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Slave: $id', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Text('Attached to master: $masterId'),
-            const Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
-            ),
-          ],
+    return PanelResizeHandle(
+      child: Material(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PanelMoveHandle(
+                child: Container(
+                  color: Colors.blueGrey.shade50,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text('Slave: $id', style: Theme.of(context).textTheme.titleMedium)),
+                      IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text('Attached to master: $masterId'),
+              const Spacer(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(onPressed: controller.close, icon: const Icon(Icons.close)),
+              ),
+            ],
+          ),
         ),
       ),
     );

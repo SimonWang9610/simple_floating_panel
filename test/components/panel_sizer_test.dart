@@ -28,10 +28,7 @@ void main() {
 
     test('aspectRatio uses width-constrained branch when max is narrow', () {
       const sizer = PanelSizer.aspectRatio(aspectRatio: 2, scale: 1);
-      final narrowConstraints = PanelConstraints(
-        minSize: const Size(80, 60),
-        maxSize: const Size(600, 500),
-      );
+      final narrowConstraints = PanelConstraints(minSize: const Size(80, 60), maxSize: const Size(600, 500));
 
       final size = sizer.constrain(narrowConstraints);
 
@@ -40,10 +37,7 @@ void main() {
 
     test('aspectRatio uses height-constrained branch when max is wide', () {
       const sizer = PanelSizer.aspectRatio(aspectRatio: 2, scale: 1);
-      final wideConstraints = PanelConstraints(
-        minSize: const Size(80, 60),
-        maxSize: const Size(1200, 500),
-      );
+      final wideConstraints = PanelConstraints(minSize: const Size(80, 60), maxSize: const Size(1200, 500));
 
       final size = sizer.constrain(wideConstraints);
 

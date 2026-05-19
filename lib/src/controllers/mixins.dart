@@ -133,12 +133,8 @@ base mixin PanelStateSetterMixin on PanelController {
   PanelGeometry defaultGeometryOf(Panel panel) {
     final size = panel.initialSize ?? sizer.constrain(constraints);
 
-    final origin = panel.initialPosition ??
-        positioner.find(
-          panels.map((p) => p.controller.value.geometry),
-          constraints,
-          size,
-        );
+    final origin =
+        panel.initialPosition ?? positioner.find(panels.map((p) => p.controller.value.geometry), constraints, size);
 
     return PanelGeometry(origin: origin, size: size);
   }

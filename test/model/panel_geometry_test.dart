@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_floating_panel/simple_floating_panel.dart';
+import 'package:simple_floating_panel/src/models/resize_direction.dart';
 
 void main() {
   group('PanelGeometry', () {

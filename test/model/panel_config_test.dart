@@ -26,9 +26,7 @@ void main() {
       final config = PanelConfig(
         decoration: const BoxDecoration(color: Colors.red),
         focusedDecoration: const BoxDecoration(color: Colors.blue),
-        previewStyle: const PanelPreviewStyle(
-          decoration: BoxDecoration(color: Colors.green),
-        ),
+        previewStyle: const PanelPreviewStyle(decoration: BoxDecoration(color: Colors.green)),
       );
 
       await tester.pumpWidget(
@@ -54,18 +52,11 @@ void main() {
 
     testWidgets('wrap clips child when selected decoration has border radius', (tester) async {
       final config = PanelConfig(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
+        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(12))),
         focusedDecoration: const BoxDecoration(color: Colors.blue),
       );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: config.wrap(const SizedBox()),
-        ),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: config.wrap(const SizedBox())));
 
       expect(find.byType(ClipRRect), findsOneWidget);
     });
